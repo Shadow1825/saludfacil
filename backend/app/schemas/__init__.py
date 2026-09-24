@@ -30,6 +30,7 @@ from app.schemas.medical import (
     serialize_profesional,
     serialize_schedule,
 )
+from app.schemas.triage import SintomaInput, TriageCreate, serialize_triage
 
 __all__ = [
     "AdminCitaEstado",
@@ -48,7 +49,9 @@ __all__ = [
     "ScheduleCreate",
     "ScheduleOut",
     "ScheduleUpdate",
+    "SintomaInput",
     "TokenResponse",
+    "TriageCreate",
     "UserOut",
     "_parse_time",
     "serialize_cita",
@@ -56,4 +59,5 @@ __all__ = [
     "serialize_especialidad",
     "serialize_profesional",
     "serialize_schedule",
+    "serialize_triage",
 ]

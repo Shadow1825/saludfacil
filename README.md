@@ -59,6 +59,9 @@ Por fases, conforme al plan del documento de especificación:
   de disponibilidad del paciente (RF-04 a RF-08, HU-03/HU-11, CA-03.x y CA-11.x).
 - **FASE 4 — ✅ Gestión de citas** reserva, consulta, cancelación y administración
   (RF-09 a RF-11, RF-21; RNF-09; HU-04/HU-05/HU-06 y CA-04 a CA-06, CA-11.4).
+- **FASE 5 — ✅ Triaje inicial** registro de síntomas, clasificación inicial determinista
+  (reglas oficiales R1-R6: Alta/Media/Baja) y consulta por paciente y profesional
+  (RF-12 a RF-16; HU-07/HU-08/HU-09/HU-10 y CA-07 a CA-10).
 - FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
 - FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
 - FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.

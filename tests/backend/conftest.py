@@ -20,7 +20,7 @@ import app.db.session as db_session_mod  # noqa: E402
 import app.main as main_mod  # noqa: E402
 from app.api.routes import health  # noqa: E402
 from app.db.base import Base  # noqa: E402
-from app.models import Cita, Especialidad, Horario, Profesional, User  # noqa: E402
+from app.models import Cita, Especialidad, Horario, Profesional, Triaje, User  # noqa: E402
 
 TEST_ENGINE = create_engine(
     "sqlite://",
@@ -55,6 +55,7 @@ def db() -> Generator:
     """Sesión de base de datos de prueba limpia por test (SQLite compartida)."""
     session = TestingSessionLocal()
     try:
+        session.query(Triaje).delete()  # FK -> citas (borrar primero)
         session.query(Cita).delete()
         session.query(Horario).delete()
         session.query(Profesional).delete()

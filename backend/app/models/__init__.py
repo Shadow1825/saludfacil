@@ -7,6 +7,7 @@ from app.models.appointment import (
     CitaEstado,
 )
 from app.models.medical import DIAS_SEMANA, Especialidad, Horario, Profesional
+from app.models.triage import Triaje
 from app.models.user import User, UserRole
 
 __all__ = [
@@ -18,6 +19,7 @@ __all__ = [
     "Especialidad",
     "Horario",
     "Profesional",
+    "Triaje",
     "User",
     "UserRole",
 ]

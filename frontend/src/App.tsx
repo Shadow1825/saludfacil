@@ -13,7 +13,9 @@ import { DashboardHome, DashboardLayout } from "./pages/Dashboard";
 import { DisponibilidadPage } from "./pages/Disponibilidad";
 import { HomePage } from "./pages/Home";
 import { MisCitasPage } from "./pages/MisCitas";
+import { MisTriajesPage } from "./pages/MisTriajes";
 import { ReservarCitaPage } from "./pages/ReservarCita";
+import { TriajePage } from "./pages/Triaje";
 
 export default function App(): JSX.Element {
   return (
@@ -50,6 +52,22 @@ export default function App(): JSX.Element {
               element={
                 <ProtectedRoute roles={["paciente"]}>
                   <MisCitasPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="triaje"
+              element={
+                <ProtectedRoute roles={["paciente"]}>
+                  <TriajePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profesional/triajes"
+              element={
+                <ProtectedRoute roles={["profesional"]}>
+                  <MisTriajesPage />
                 </ProtectedRoute>
               }
             />

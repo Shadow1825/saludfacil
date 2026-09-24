@@ -11,9 +11,45 @@
 | 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | ✅ Implementado y probado |
 | 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | ✅ Implementado y probado |
 | 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | ✅ Implementado y probado |
-| 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | Pendiente |
+| 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | ✅ Implementado y probado |
 | 6    | RF-03, RF-17 | Pendiente |
 | 7    | RNF-06, RNF-07 | Pendiente |
+
+## FASE 5 — trazabilidad verificada
+
+Las reglas de clasificación de esta fase son la **especificación oficial del motor de
+triaje** (académica; NO constituyen un protocolo médico ni un diagnóstico).
+
+| Regla | Condición                                                                    | Resultado |
+| ----- | ---------------------------------------------------------------------------- | --------- |
+| R1    | Dificultad respiratoria intensa                                              | Alta      |
+| R2    | Dolor torácico intenso                                                       | Alta      |
+| R3    | Pérdida de conciencia                                                        | Alta      |
+| R4    | No hay regla de Alta y existen 2 o más síntomas de severidad moderada        | Media     |
+| R5    | No hay regla de Alta ni R4 y existe al menos 1 síntoma de severidad moderada | Media     |
+| R6    | No se cumple ninguna regla anterior y los síntomas son de severidad leve     | Baja      |
+
+Precedencia: **Alta → Media → Baja**. Mismos datos de entrada → mismo resultado (determinista).
+
+| Requisito | HU  | Criterios        | CP  | Implementación                       | Estado |
+|-----------|-----|------------------|-----|--------------------------------------|--------|
+| RF-12     | HU-07 | CA-07.1–07.3    | CP-12 | `POST /api/triage` (R1-R6) `services/triage.py` | ✅ pruebas 201/409/422/403 |
+| RF-13     | HU-08 | CA-08.1–08.4    | CP-13 | `GET /api/triage` (paciente: solo los suyos) | ✅ pruebas 200/403 |
+| RF-14     | HU-08 | CA-08.2–08.4    | CP-14 | `GET /api/triage` y `/{id}` (profesional: solo sus citas) | ✅ pruebas 200/403 |
+| RF-15     | HU-09 | CA-09.1, 09.2   | CP-15 | clasificación síncrona en la respuesta (tiempo real) | ✅ pruebas 201 |
+| RF-16     | HU-10 | CA-10.1, 10.2   | CP-16 | motor puro y determinista (sin estado externo) | ✅ pruebas R1-R6 + determinismo |
+
+Decisiones técnicas (documentadas, sin alterar requisitos):
+- **Síntomas de Alta (R1-R3)**: los tres canónicos de la tabla (dificultad respiratoria,
+  dolor torácico, pérdida de conciencia) con severidad **intensa**. Los demás síntomas se
+  reportan como **moderada** o **leve**; "intensa" en un síntoma no canónico es un 422.
+- **El resultado se asocia al paciente y a la cita reservada que lo motiva**; un triaje por
+  cita (unique `cita_id`). El triaje se registra mientras la cita está `reservada` y no venció.
+- **Clasificación inicial, no diagnóstico**: la respuesta incluye `es_diagnostico=false` y el
+  mensaje oficial de orientación (CA-07.x).
+- **Acceso**: el paciente solo ve los suyos; el profesional, solo los de sus citas (vía
+  `citas.professional_id == profesionales.user_id`); el administrador tiene acceso de solo
+  lectura al sistema completo (la revisión oficial RF-17 corresponde a FASE 6).
 
 ## FASE 4 — trazabilidad verificada
 
