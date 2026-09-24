@@ -5,11 +5,12 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, health, medical, users
+from app.api.routes import appointments, auth, health, medical, users
 from app.core.config import settings
 from app.core.logging import configure_logging, get_logger
 from app.db.base import Base
 from app.db.session import engine
+from app.models import appointment as _appointment_model  # noqa: F401  (registra los modelos)
 from app.models import medical as _medical_model  # noqa: F401  (registra los modelos)
 from app.models import user as _user_model  # noqa: F401  (registra los modelos)
 
@@ -46,6 +47,7 @@ app.include_router(health_router := health.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")
 app.include_router(users.router, prefix="/api")
 app.include_router(medical.router)
+app.include_router(appointments.router)
 
 
 @app.get("/", include_in_schema=False)

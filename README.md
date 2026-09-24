@@ -57,6 +57,8 @@ Por fases, conforme al plan del documento de especificación:
   RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05).
 - **FASE 3 — ✅ Catálogo médico** (especialidades, profesionales, horarios) y consulta
   de disponibilidad del paciente (RF-04 a RF-08, HU-03/HU-11, CA-03.x y CA-11.x).
+- **FASE 4 — ✅ Gestión de citas** reserva, consulta, cancelación y administración
+  (RF-09 a RF-11, RF-21; RNF-09; HU-04/HU-05/HU-06 y CA-04 a CA-06, CA-11.4).
 - FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
 - FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
 - FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.

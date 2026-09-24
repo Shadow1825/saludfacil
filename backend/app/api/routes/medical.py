@@ -4,6 +4,7 @@ Administración (solo administrador): RF-04, RF-05, RF-06.
 Directorio y disponibilidad (paciente/profesional autenticado): RF-07, RF-08.
 """
 
+from datetime import datetime, timezone
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -303,3 +304,30 @@ def directory_schedules(
     ).scalars().all()
     # FASE 3: un horario activo está disponible (las citas se restan en FASE 4).
     return [serialize_schedule(h) for h in resultado]
+
+
+@router.get("/directory/slots")
+def directory_slots(
+    db: SessionDep,
+    professional_id: int = Query(...),
+    fecha: str = Query(...),
+    _: User = Depends(get_current_user),
+):
+    """Tramos de 30 minutos libres del profesional en la fecha indicada (RF-08/RF-09).
+
+    Excluye tramos ya reservados y fechas pasadas (RNF-09).
+    """
+    try:
+        fecha_date = datetime.strptime(fecha, "%Y-%m-%d").date()
+    except ValueError:
+        raise HTTPException(status_code=422, detail="Formato de fecha inválido (use YYYY-MM-DD).")
+    if fecha_date < datetime.now(timezone.utc).date():
+        raise HTTPException(status_code=422, detail="No se pueden consultar fechas pasadas. (RNF-09)")
+
+    profesional = db.get(Profesional, professional_id)
+    if not profesional or not profesional.is_active:
+        raise HTTPException(status_code=404, detail="Profesional no encontrado o inactivo.")
+
+    from app.api.routes.appointments import _slots_libres
+
+    return _slots_libres(db, profesional, fecha_date)

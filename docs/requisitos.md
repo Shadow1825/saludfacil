@@ -10,10 +10,29 @@
 | 1    | Infraestructura      | ✅ Implementado       |
 | 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | ✅ Implementado y probado |
 | 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | ✅ Implementado y probado |
-| 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | Pendiente |
+| 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | ✅ Implementado y probado |
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | Pendiente |
 | 6    | RF-03, RF-17 | Pendiente |
 | 7    | RNF-06, RNF-07 | Pendiente |
+
+## FASE 4 — trazabilidad verificada
+
+| Requisito | HU  | Criterios        | CP  | Implementación                              | Estado |
+|-----------|-----|------------------|-----|---------------------------------------------|--------|
+| RF-09     | HU-04 | CA-04.1–04.4    | CP-09 | `api/routes/appointments.py: POST /appointments` (reserva y bloquea) | ✅ pruebas 201/409/422/403 |
+| RF-10     | HU-05 | CA-05.1–05.3    | CP-10 | `GET /appointments` (solo las propias)       | ✅ pruebas 200 |
+| RF-11     | HU-06 | CA-06.1–06.4    | CP-11 | `POST /appointments/{id}/cancel` (libera horario) | ✅ pruebas 200/403/409/201 |
+| RF-21     | HU-11 | CA-11.4         | CP-21 | `GET/PATCH /appointments` admin (estado, cancelación) | ✅ pruebas 200/409 |
+| RNF-09    | HU-04/HU-06 | CA-04.2, CA-06.3 | CP-NF-09 | fechas pasadas (422), horario ocupado (409), parcial único activo | ✅ |
+
+Decisiones técnicas (documentadas, sin alterar requisitos):
+- **Duración de cita = 30 minutos**; la disponibilidad fragmenta los horarios de
+  atención (RF-06) en tramos de 30 min no reservados.
+- **Bloqueo real del horario**: índice único parcial `(profesional, fecha, hora_inicio)`
+  sobre citas activas; al cancelar, la cita pasa a inactiva y el tramo queda libre.
+- **Cancelación**: solo el paciente dueño o el administrador; no se permite cancelar
+  citas ya iniciadas o pasadas (CA-06.x / RNF-09).
+- **Un paciente solo ve sus citas** (RF-10); el administrador ve el sistema completo (RF-21).
 
 ## FASE 3 — trazabilidad verificada
 

@@ -46,8 +46,8 @@ export function DashboardLayout(): JSX.Element {
             <>
               <DashboardLink to="/" label="Inicio" />
               <DashboardLink to="/disponibilidad" label="Disponibilidad" />
-              <span className="nav__pending">Reservar cita (FASE 4)</span>
-              <span className="nav__pending">Mis citas (FASE 4)</span>
+              <DashboardLink to="/reservar" label="Reservar cita" />
+              <DashboardLink to="/mis-citas" label="Mis citas" />
               <span className="nav__pending">Triaje (FASE 5)</span>
               <span className="nav__pending">Mi perfil (FASE 6)</span>
             </>
@@ -69,7 +69,7 @@ export function DashboardLayout(): JSX.Element {
               <DashboardLink to="/admin/profesionales" label="Profesionales" />
               <DashboardLink to="/admin/especialidades" label="Especialidades" />
               <DashboardLink to="/admin/horarios" label="Horarios" />
-              <span className="nav__pending">Citas (FASE 4/6)</span>
+              <DashboardLink to="/admin/citas" label="Citas" />
             </>
           )}
         </nav>
@@ -95,7 +95,7 @@ export function DashboardHome(): JSX.Element {
     paciente: [
       "Registrarse e iniciar sesión (FASE 2, completado)",
       "Consulta de disponibilidad (FASE 3, completado)",
-      "Reserva y cancelación de citas (FASE 4)",
+      "Reserva y cancelación de citas (FASE 4, completado)",
       "Triaje inicial (FASE 5)",
       "Actualización de datos (FASE 6)",
     ],
@@ -107,7 +107,7 @@ export function DashboardHome(): JSX.Element {
     administrador: [
       "Gestión de cuentas de usuario (FASE 2, completado)",
       "Gestión de profesionales, especialidades y horarios (FASE 3, completado)",
-      "Gestión de citas (FASE 4/6)",
+      "Gestión de citas (FASE 4, completado)",
     ],
   };
 

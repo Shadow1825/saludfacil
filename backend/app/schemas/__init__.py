@@ -1,5 +1,12 @@
 """Esquemas Pydantic del dominio."""
 
+from app.schemas.appointment import (
+    AdminCitaEstado,
+    AvailableSlot,
+    CitaCreate,
+    serialize_cita,
+    serialize_cita_detalle,
+)
 from app.schemas.auth import (
     AdminUserCreateRequest,
     AdminUserUpdateRequest,
@@ -25,8 +32,11 @@ from app.schemas.medical import (
 )
 
 __all__ = [
+    "AdminCitaEstado",
     "AdminUserCreateRequest",
     "AdminUserUpdateRequest",
+    "AvailableSlot",
+    "CitaCreate",
     "EspecialidadCreate",
     "EspecialidadOut",
     "EspecialidadUpdate",
@@ -41,6 +51,8 @@ __all__ = [
     "TokenResponse",
     "UserOut",
     "_parse_time",
+    "serialize_cita",
+    "serialize_cita_detalle",
     "serialize_especialidad",
     "serialize_profesional",
     "serialize_schedule",
