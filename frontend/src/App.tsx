@@ -3,9 +3,13 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./auth/AuthContext";
 import { GuestRoute } from "./auth/GuestRoute";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { AdminProfessionalsPage } from "./pages/AdminProfessionals";
+import { AdminSchedulesPage } from "./pages/AdminSchedules";
+import { AdminSpecialtiesPage } from "./pages/AdminSpecialties";
 import { AdminUsersPage } from "./pages/AdminUsers";
 import { LoginPage, RegisterPage } from "./pages/AuthPages";
 import { DashboardHome, DashboardLayout } from "./pages/Dashboard";
+import { DisponibilidadPage } from "./pages/Disponibilidad";
 import { HomePage } from "./pages/Home";
 
 export default function App(): JSX.Element {
@@ -23,10 +27,42 @@ export default function App(): JSX.Element {
           >
             <Route index element={<DashboardHome />} />
             <Route
+              path="disponibilidad"
+              element={
+                <ProtectedRoute roles={["paciente", "profesional"]}>
+                  <DisponibilidadPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="admin/usuarios"
               element={
                 <ProtectedRoute roles={["administrador"]}>
                   <AdminUsersPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/profesionales"
+              element={
+                <ProtectedRoute roles={["administrador"]}>
+                  <AdminProfessionalsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/especialidades"
+              element={
+                <ProtectedRoute roles={["administrador"]}>
+                  <AdminSpecialtiesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/horarios"
+              element={
+                <ProtectedRoute roles={["administrador"]}>
+                  <AdminSchedulesPage />
                 </ProtectedRoute>
               }
             />

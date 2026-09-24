@@ -55,6 +55,8 @@ Por fases, conforme al plan del documento de especificación:
   variables de entorno, configuración base).
 - **FASE 2 — ✅ Usuarios, roles, registro, login, JWT, RBAC, logout** (RF-01, RF-02,
   RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05).
+- **FASE 3 — ✅ Catálogo médico** (especialidades, profesionales, horarios) y consulta
+  de disponibilidad del paciente (RF-04 a RF-08, HU-03/HU-11, CA-03.x y CA-11.x).
 - FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
 - FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
 - FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.
@@ -137,8 +139,8 @@ Generados con `python -m app.seed` (dentro del contenedor: `docker compose exec 
 | Paciente     | `paciente@saludfacil.com` | `PacientePrueba!1`   |
 | Profesional  | `profesional@saludfacil.com` | `Profesional!1`    |
 
-Los DNI, teléfonos y demás datos son ficticios (Ley N.° 29733). Los especialistas y
-horarios se agregan en FASE 3.
+Los DNI, teléfonos y demás datos son ficticios (Ley N.° 29733). El seed también crea
+6 especialidades, 3 profesionales de salud y sus horarios de atención (FASE 3).
 
 ## Ejecución de pruebas
 

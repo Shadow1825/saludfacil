@@ -9,11 +9,30 @@
 |------|----------------------|-----------------------|
 | 1    | Infraestructura      | ✅ Implementado       |
 | 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | ✅ Implementado y probado |
-| 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | Pendiente |
+| 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | ✅ Implementado y probado |
 | 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | Pendiente |
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | Pendiente |
 | 6    | RF-03, RF-17 | Pendiente |
 | 7    | RNF-06, RNF-07 | Pendiente |
+
+## FASE 3 — trazabilidad verificada
+
+| Requisito | HU  | Criterios        | CP  | Implementación                          | Estado |
+|-----------|-----|------------------|-----|-----------------------------------------|--------|
+| RF-04     | HU-11 | CA-11.1         | CP-04 | `models/medical.py` + `api/routes/medical.py: /professionals` | ✅ pruebas 201/409/200 |
+| RF-05     | HU-11 | CA-11.2         | CP-05 | `/specialties` (create/update/deactivate) | ✅ pruebas 201/409 |
+| RF-06     | HU-11 | CA-11.3         | CP-06 | `/schedules` (día, inicio, fin, activo)   | ✅ pruebas 201/409/422 |
+| RF-07     | HU-03 | CA-03.1, 03.2   | CP-07 | `/directory/specialties`, `/directory/professionals` | ✅ pruebas 200/401 |
+| RF-08     | HU-03 | CA-03.3, 03.4   | CP-08 | `/directory/schedules` (solo disponibles) | ✅ pruebas 200/404 |
+| RNF-02    | HU-12 | CA-12.4         | CP-NF-02 | endpoints admin protegidos con `require_roles(ADMINISTRADOR)` | ✅ verificado en Docker |
+
+Decisiones técnicas (documentadas, sin alterar requisitos):
+- **Un profesional pertenece a una especialidad** (`profesionales.specialty_id`); la
+  disponibilidad se filtra por especialidad y profesional activos (RF-07/RF-08).
+- **Disponibilidad en FASE 3**: un horario activo está disponible; las citas ya tomadas
+  se descontarán en FASE 4 con el módulo de citas (mismo endpoint de disponibilidad).
+- **Día del horario**: `1=Lunes … 7=Domingo` con nombres traducidos para la interfaz.
+- **Horarios únicos** por (profesional, día, hora de inicio).
 
 ## FASE 2 — trazabilidad verificada
 

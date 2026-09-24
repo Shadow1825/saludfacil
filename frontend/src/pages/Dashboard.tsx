@@ -45,8 +45,7 @@ export function DashboardLayout(): JSX.Element {
           {perfil === "paciente" && (
             <>
               <DashboardLink to="/" label="Inicio" />
-              <span className="nav__pending">Especialidades (FASE 3)</span>
-              <span className="nav__pending">Profesionales (FASE 3)</span>
+              <DashboardLink to="/disponibilidad" label="Disponibilidad" />
               <span className="nav__pending">Reservar cita (FASE 4)</span>
               <span className="nav__pending">Mis citas (FASE 4)</span>
               <span className="nav__pending">Triaje (FASE 5)</span>
@@ -57,6 +56,7 @@ export function DashboardLayout(): JSX.Element {
           {perfil === "profesional" && (
             <>
               <DashboardLink to="/" label="Inicio" />
+              <span className="nav__pending">Disponibilidad (FASE 5)</span>
               <span className="nav__pending">Mis citas (FASE 4-6)</span>
               <span className="nav__pending">Resultado de triaje (FASE 5)</span>
             </>
@@ -66,9 +66,9 @@ export function DashboardLayout(): JSX.Element {
             <>
               <DashboardLink to="/" label="Inicio" />
               <DashboardLink to="/admin/usuarios" label="Usuarios" />
-              <span className="nav__pending">Profesionales (FASE 3)</span>
-              <span className="nav__pending">Especialidades (FASE 3)</span>
-              <span className="nav__pending">Horarios (FASE 3)</span>
+              <DashboardLink to="/admin/profesionales" label="Profesionales" />
+              <DashboardLink to="/admin/especialidades" label="Especialidades" />
+              <DashboardLink to="/admin/horarios" label="Horarios" />
               <span className="nav__pending">Citas (FASE 4/6)</span>
             </>
           )}
@@ -94,7 +94,7 @@ export function DashboardHome(): JSX.Element {
   const tareasPorRol: Record<string, string[]> = {
     paciente: [
       "Registrarse e iniciar sesión (FASE 2, completado)",
-      "Consulta de disponibilidad (FASE 3)",
+      "Consulta de disponibilidad (FASE 3, completado)",
       "Reserva y cancelación de citas (FASE 4)",
       "Triaje inicial (FASE 5)",
       "Actualización de datos (FASE 6)",
@@ -106,7 +106,7 @@ export function DashboardHome(): JSX.Element {
     ],
     administrador: [
       "Gestión de cuentas de usuario (FASE 2, completado)",
-      "Gestión de profesionales, especialidades y horarios (FASE 3)",
+      "Gestión de profesionales, especialidades y horarios (FASE 3, completado)",
       "Gestión de citas (FASE 4/6)",
     ],
   };
