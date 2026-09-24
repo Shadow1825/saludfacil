@@ -1,13 +1,27 @@
 """Punto de entrada de la aplicación FastAPI de SaludFácil."""
 
+from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes.health import router as health_router
+from app.api.routes import auth, health, users
 from app.core.config import settings
-from app.core.logging import configure_logging
+from app.core.logging import configure_logging, get_logger
+from app.db.base import Base
+from app.db.session import engine
+from app.models import user as _user_model  # noqa: F401  (registra los modelos)
 
-configure_logging()
+
+@asynccontextmanager
+async def lifespan(_app: FastAPI):
+    """Al iniciar, crea las tablas si no existen (sin migraciones en esta fase)."""
+    configure_logging()
+    logger = get_logger(__name__)
+    Base.metadata.create_all(bind=engine)
+    logger.info("Base de datos lista.")
+    yield
+
 
 app = FastAPI(
     title=settings.app_name,
@@ -16,6 +30,7 @@ app = FastAPI(
         "API REST de SaludFácil: Sistema de Gestión de Citas Médicas y Triaje. "
         "Documentación generada automáticamente (OpenAPI)."
     ),
+    lifespan=lifespan,
 )
 
 app.add_middleware(
@@ -26,7 +41,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(health_router, prefix="/api")
+app.include_router(health_router := health.router, prefix="/api")
+app.include_router(auth.router, prefix="/api")
+app.include_router(users.router, prefix="/api")
 
 
 @app.get("/", include_in_schema=False)

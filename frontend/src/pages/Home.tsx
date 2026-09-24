@@ -37,9 +37,19 @@ export function HomePage(): JSX.Element {
 
       <main id="main" className="content" role="main">
         <p>
-          Bienvenido. Este proyecto se construye por fases para garantizar la trazabilidad con
-          los requisitos del curso <strong>Calidad y Pruebas de Software (ISOF1401A)</strong>.
+          Bienvenido a <strong>SaludFácil</strong>. Este proyecto se construye por fases para
+          garantizar la trazabilidad con los requisitos del curso{" "}
+          <strong>Calidad y Pruebas de Software (ISOF1401A)</strong>.
         </p>
+
+        <div className="actions-row">
+          <a className="button button--primary" href="/login">
+            Iniciar sesión
+          </a>
+          <a className="button button--secondary" href="/registro">
+            Crear cuenta
+          </a>
+        </div>
 
         <section className="card" aria-labelledby="titulo-estado">
           <h2 id="titulo-estado">Estado de conexión (FASE 1)</h2>

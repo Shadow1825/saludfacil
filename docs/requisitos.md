@@ -8,12 +8,32 @@
 | Fase | Requisitos cubiertos | Estado                |
 |------|----------------------|-----------------------|
 | 1    | Infraestructura      | ✅ Implementado       |
-| 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | Pendiente |
+| 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | ✅ Implementado y probado |
 | 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | Pendiente |
 | 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | Pendiente |
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | Pendiente |
 | 6    | RF-03, RF-17 | Pendiente |
 | 7    | RNF-06, RNF-07 | Pendiente |
+
+## FASE 2 — trazabilidad verificada
+
+| Requisito | HU  | Criterios            | CP  | Implementación                          | Estado |
+|-----------|-----|----------------------|-----|-----------------------------------------|--------|
+| RF-01     | HU-01 | CA-01.1–01.4        | CP-01 | `api/routes/auth.py: register`          | ✅ pruebas 201/409/422 |
+| RF-02     | HU-02 | CA-02.1–02.4        | CP-02 | `api/routes/auth.py: login`             | ✅ pruebas 200/401/403 |
+| RF-18     | HU-11 | CA-11.5             | CP-18 | `api/routes/users.py` (admin)           | ✅ pruebas 201/200/409 |
+| RF-19     | HU-12 | CA-12.1–12.4        | CP-19 | `services/security.py: require_roles`   | ✅ pruebas 401/403 |
+| RF-20     | HU-14 | CA-14.1–14.3        | CP-20 | `api/routes/auth.py: logout` (token_version) | ✅ pruebas 200/401 |
+| RNF-01    | HU-02 | CA-02.3             | CP-NF-01 | bcrypt + JWT expiración 30 min        | ✅ |
+| RNF-02    | HU-12 | CA-12.4             | CP-NF-02 | 403 en API para rutas de admin         | ✅ verificado en Docker |
+| RNF-05    | HU-01/HU-07 | CA-01.2, CA-07.2 | CP-NF-05 | Pydantic: DNI 8 dígitos, email, obligatorios | ✅ `^[0-9]{8}$` |
+
+Decisiones técnicas (documentadas, sin alterar requisitos):
+- **Sesión de 30 minutos**: se implementa como expiración del JWT (`ACCESS_TOKEN_EXPIRE_MINUTES=30`).
+- **Cierre de sesión**: `token_version` por usuario; cada login expide un token con la versión
+  vigente; al hacer logout se incrementa, invalidando los tokens anteriores (RF-20).
+- **Hash**: bcrypt con sal (RNF-01).
+- **Validaciones**: en la capa de esquemas Pydantic (RNF-05).
 
 ## Matriz funcional planificada (oficial)
 

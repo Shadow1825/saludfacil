@@ -53,7 +53,8 @@ Por fases, conforme al plan del documento de especificación:
 
 - **FASE 1 — ✅ Estructura y base ejecutable** (frontend, backend, PostgreSQL, Docker,
   variables de entorno, configuración base).
-- FASE 2 — ⏳ Usuarios, roles, registro, login, JWT, RBAC, logout.
+- **FASE 2 — ✅ Usuarios, roles, registro, login, JWT, RBAC, logout** (RF-01, RF-02,
+  RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05).
 - FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
 - FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
 - FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.
@@ -126,10 +127,18 @@ Ver `.env.example` (documentadas en su interior). Resumen:
 - `CORS_ORIGINS` — orígenes permitidos para el frontend.
 - `VITE_API_URL` — URL de la API visible por el frontend.
 
-## Usuarios de prueba
+## Usuarios de prueba (datos ficticios, RES-04)
 
-- **Pendiente:** se crearán datos *seed* ficticios (paciente, profesional y administrador
-  de prueba) en FASE 2. No se usan datos reales (Ley N.° 29733).
+Generados con `python -m app.seed` (dentro del contenedor: `docker compose exec backend python -m app.seed`):
+
+| Rol          | Correo                    | Contraseña           |
+|--------------|---------------------------|----------------------|
+| Administrador| `admin@saludfacil.com`    | `AdminSaludFacil!1`  |
+| Paciente     | `paciente@saludfacil.com` | `PacientePrueba!1`   |
+| Profesional  | `profesional@saludfacil.com` | `Profesional!1`    |
+
+Los DNI, teléfonos y demás datos son ficticios (Ley N.° 29733). Los especialistas y
+horarios se agregan en FASE 3.
 
 ## Ejecución de pruebas
 
