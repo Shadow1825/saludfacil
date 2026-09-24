@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: saludfacil_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-saludfacil}
+      POSTGRES_USER: ${POSTGRES_USER:-saludfacil}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-saludfacil_dev_password}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-saludfacil} -d ${POSTGRES_DB:-saludfacil}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: saludfacil_backend
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-saludfacil}:${POSTGRES_PASSWORD:-saludfacil_dev_password}@postgres:5432/${POSTGRES_DB:-saludfacil}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:8000}
+    container_name: saludfacil_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

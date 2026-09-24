@@ -1,0 +1,46 @@
+# Registro de requisitos y trazabilidad
+
+> Fuente de verdad: documento oficial del proyecto (sección 4: requisitos, historias de
+> usuario, criterios de aceptación y matriz de trazabilidad).
+
+## Estado por fase
+
+| Fase | Requisitos cubiertos | Estado                |
+|------|----------------------|-----------------------|
+| 1    | Infraestructura      | ✅ Implementado       |
+| 2    | RF-01, RF-02, RF-18, RF-19, RF-20; RNF-01, RNF-02, RNF-05 | Pendiente |
+| 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | Pendiente |
+| 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | Pendiente |
+| 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | Pendiente |
+| 6    | RF-03, RF-17 | Pendiente |
+| 7    | RNF-06, RNF-07 | Pendiente |
+
+## Matriz funcional planificada (oficial)
+
+| Requisito | HU  | Criterios            | CP  | Código | Estado |
+|-----------|-----|----------------------|-----|--------|--------|
+| RF-01     | HU-01 | CA-01.1–01.4        | CP-01 | | Pendiente |
+| RF-02     | HU-02 | CA-02.1–02.4        | CP-02 | | Pendiente |
+| RF-03     | HU-15 | CA-15.1–15.4        | CP-03 | | Pendiente |
+| RF-04     | HU-11 | CA-11.1             | CP-04 | | Pendiente |
+| RF-05     | HU-11 | CA-11.2             | CP-05 | | Pendiente |
+| RF-06     | HU-11 | CA-11.3             | CP-06 | | Pendiente |
+| RF-07     | HU-03 | CA-03.1, 03.2       | CP-07 | | Pendiente |
+| RF-08     | HU-03 | CA-03.3, 03.4       | CP-08 | | Pendiente |
+| RF-09     | HU-04 | CA-04.1–04.4        | CP-09 | | Pendiente |
+| RF-10     | HU-05 | CA-05.1–05.3        | CP-10 | | Pendiente |
+| RF-11     | HU-06 | CA-06.1–06.4        | CP-11 | | Pendiente |
+| RF-12     | HU-07 | CA-07.1–07.3        | CP-12 | | Pendiente |
+| RF-13     | HU-08 | CA-08.1–08.4        | CP-13 | | Pendiente |
+| RF-14     | HU-08 | CA-08.2–08.4        | CP-14 | | Pendiente |
+| RF-15     | HU-09 | CA-09.1, 09.2       | CP-15 | | Pendiente |
+| RF-16     | HU-10 | CA-10.1, 10.2       | CP-16 | | Pendiente |
+| RF-17     | HU-13 | CA-13.1–13.3        | CP-17 | | Pendiente |
+| RF-18     | HU-11 | CA-11.5             | CP-18 | | Pendiente |
+| RF-19     | HU-12 | CA-12.1–12.4        | CP-19 | | Pendiente |
+| RF-20     | HU-14 | CA-14.1–14.3        | CP-20 | | Pendiente |
+| RF-21     | HU-11 | CA-11.4             | CP-21 | | Pendiente |
+
+La columna *Código* se completará cuando cada funcionalidad tenga implementación; la
+columna *Estado* cambiará a "✅" mediante casos de prueba reales. No se registran
+resultados que no existan (regla contra la invención).

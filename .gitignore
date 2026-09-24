@@ -1,0 +1,41 @@
+# Dependencias
+node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+
+# Entornos y secretos
+.env
+!.env.example
+*.local
+
+# Bases de datos locales
+*.db
+*.sqlite3
+pgdata/
+postgres_data/
+
+# Repositorio
+coverage/
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+playwright-report/
+test-results/
+.k6/
+*.tsbuildinfo
+
+# IDEs y SO
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/

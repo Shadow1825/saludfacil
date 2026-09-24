@@ -1,0 +1,8 @@
+# CI — SaludFácil (FASE 9 pendiente de completar)
+
+Este flujo de trabajo se implementa por completo en FASE 9 conforme a la especificación:
+instalación → lint → pruebas unitarias → integración → build → análisis de calidad → E2E.
+
+> Estado: PLANTILLA INICIAL. No se declara como funcional hasta verificarse en el
+> repositorio remoto (RES-03). Se agrega en FASE 1 únicamente la estructura y el job de
+> backend para no introducir configuración no comprobada.

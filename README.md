@@ -1,0 +1,153 @@
+# SaludFácil
+
+**Sistema de Gestión de Citas Médicas y Triaje**
+
+Caso de estudio: *Clínica Comunitaria del Norte S.A.C.*
+
+Proyecto del curso **Calidad y Pruebas de Software (ISOF1401A)** — Ingeniería de Sistemas
+Computacionales, ciclo 2026-2.
+
+> El documento de requisitos (con los identificadores RF, RNF, RES, HU, CA y CP) es la
+> **fuente de verdad** del sistema. Esta implementación mantiene trazabilidad estricta
+> entre requisitos, historias de usuario, criterios de aceptación, código y pruebas.
+
+## Propósito
+
+Organizar digitalmente los procesos de gestión de citas y triaje inicial de la clínica,
+con tres roles de acceso (paciente, profesional de salud y administrador), controles de
+seguridad por rol y una arquitectura preparada para pruebas de calidad.
+
+> **Importante:** el triaje constituye únicamente una *clasificación inicial orientativa*
+> basada en reglas definidas para el proyecto. **No es un diagnóstico médico.**
+
+## Arquitectura
+
+```text
+Frontend (React + TypeScript + Vite)
+      |
+      | HTTP/REST (JSON)
+      v
+Backend (FastAPI + SQLAlchemy)
+      |
+      v
+PostgreSQL
+```
+
+Separación por capas: presentación, API, lógica de negocio, persistencia, modelos,
+esquemas y autenticación/autorización.
+
+## Tecnologías
+
+| Capa        | Tecnología                                             |
+|-------------|--------------------------------------------------------|
+| Frontend    | React, TypeScript, Vite, CSS responsive                |
+| Backend     | Python, FastAPI, Pydantic, SQLAlchemy, JWT, RBAC       |
+| Base de datos | PostgreSQL                                            |
+| Infra       | Docker, Docker Compose, `.env`, Git, GitHub            |
+| Pruebas     | Pytest, Playwright, K6, axe, Lighthouse, SonarQube     |
+| CI/CD       | GitHub Actions                                         |
+
+## Estado del proyecto
+
+Por fases, conforme al plan del documento de especificación:
+
+- **FASE 1 — ✅ Estructura y base ejecutable** (frontend, backend, PostgreSQL, Docker,
+  variables de entorno, configuración base).
+- FASE 2 — ⏳ Usuarios, roles, registro, login, JWT, RBAC, logout.
+- FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
+- FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
+- FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.
+- FASE 6 — Estados de atención y administración.
+- FASE 7 — Accesibilidad, manejo de errores, seguridad, responsive, logs seguros.
+- FASE 8 — Pytest, Playwright, K6, axe, Lighthouse, SonarQube.
+- FASE 9 — Docker definitivo, GitHub Actions, CI/CD, reportes.
+
+## Requisitos previos
+
+- Docker Desktop (para ejecución por contenedores).
+- Alternativa local: Python 3.12+ y Node.js 20+.
+
+## Configuración
+
+1. Copiar el archivo de ejemplo a `.env`:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Ajustar credenciales de PostgreSQL y el secreto JWT (nunca subir `.env` real).
+
+## Ejecución con Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Servicios:
+
+| Servicio  | URL                          |
+|-----------|------------------------------|
+| Frontend  | http://localhost:3000        |
+| Backend   | http://localhost:8000/docs   |
+| PostgreSQL| localhost:5432               |
+
+## Ejecución local (desarrollo)
+
+### Backend
+
+```bash
+cd backend
+python -m venv .venv
+.venv\Scripts\activate            # Windows
+pip install -r requirements.txt
+# Ajustar DATABASE_URL en .env para apuntar a un PostgreSQL local
+uvicorn app.main:app --reload --port 8000
+```
+
+Docs interactivas: http://localhost:8000/docs (OpenAPI/Swagger).
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+URL: http://localhost:5173 (el proxy de Vite envía `/api/*` al backend).
+
+## Variables de entorno
+
+Ver `.env.example` (documentadas en su interior). Resumen:
+
+- `DATABASE_URL` — conexión del backend a PostgreSQL.
+- `SECRET_KEY` — secreto de firma de tokens (usado desde FASE 2).
+- `ACCESS_TOKEN_EXPIRE_MINUTES` — 30 para cumplir RNF-01.
+- `CORS_ORIGINS` — orígenes permitidos para el frontend.
+- `VITE_API_URL` — URL de la API visible por el frontend.
+
+## Usuarios de prueba
+
+- **Pendiente:** se crearán datos *seed* ficticios (paciente, profesional y administrador
+  de prueba) en FASE 2. No se usan datos reales (Ley N.° 29733).
+
+## Ejecución de pruebas
+
+- Backend (pytest): `cd backend && pytest`
+- Frontend (vitest): `cd frontend && npm test`
+- E2E (Playwright), K6, axe/Lighthouse y SonarQube: **Pendiente de configuración**
+  (FASE 8). No se declaran resultados que aún no existen.
+
+## CI/CD
+
+- GitHub Actions: **pendiente de implementación completa** (FASE 9) conforme a la
+  especificación (instalación, lint, unitarias, integración, build, análisis y E2E).
+
+## Documentación
+
+- `docs/arquitectura.md` — decisiones de arquitectura.
+- `docs/requisitos.md` — registro de requisitos y trazabilidad (en elaboración por fase).
+
+---
+*Este proyecto usa exclusivamente datos ficticios o anonimizados para pruebas,
+conforme a la Ley N.° 29733. El historial de Git conserva los commits del equipo (RES-01).*

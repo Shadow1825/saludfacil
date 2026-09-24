@@ -1,0 +1,1 @@
+"""Dependencias compartidas (autenticación y autorización) se incorporarán en FASE 2."""
