@@ -91,46 +91,114 @@ export function DashboardLayout(): JSX.Element {
   );
 }
 
+interface Acceso {
+  titulo: string;
+  descripcion: string;
+  to: string;
+}
+
+const ACCESOS_POR_ROL: Record<string, Acceso[]> = {
+  paciente: [
+    {
+      titulo: "Disponibilidad",
+      descripcion: "Consulte horarios disponibles de los profesionales por especialidad.",
+      to: "/disponibilidad",
+    },
+    {
+      titulo: "Reservar cita",
+      descripcion: "Reserve su atención médica eligiendo fecha y horario.",
+      to: "/reservar",
+    },
+    {
+      titulo: "Mis citas",
+      descripcion: "Revise sus próximas citas y cancele las que no pueda asistir.",
+      to: "/mis-citas",
+    },
+    {
+      titulo: "Triaje inicial",
+      descripcion: "Registre sus síntomas y obtenga una clasificación inicial orientativa.",
+      to: "/triaje",
+    },
+    {
+      titulo: "Mi perfil",
+      descripcion: "Actualice sus datos de contacto.",
+      to: "/perfil",
+    },
+  ],
+  profesional: [
+    {
+      titulo: "Disponibilidad",
+      descripcion: "Consulte la agenda y los horarios de atención de los profesionales.",
+      to: "/disponibilidad",
+    },
+    {
+      titulo: "Mis citas",
+      descripcion: "Revise las citas asignadas a su atención.",
+      to: "/profesional/citas",
+    },
+    {
+      titulo: "Triaje de citas",
+      descripcion: "Consulte la clasificación inicial de sus citas.",
+      to: "/profesional/triajes",
+    },
+  ],
+  administrador: [
+    {
+      titulo: "Usuarios",
+      descripcion: "Administre las cuentas de los usuarios del sistema.",
+      to: "/admin/usuarios",
+    },
+    {
+      titulo: "Profesionales",
+      descripcion: "Administre los profesionales y las especialidades médicas.",
+      to: "/admin/profesionales",
+    },
+    {
+      titulo: "Horarios",
+      descripcion: "Gestione la agenda de atención de cada profesional.",
+      to: "/admin/horarios",
+    },
+    {
+      titulo: "Citas",
+      descripcion: "Supervise las citas registradas en el sistema.",
+      to: "/admin/citas",
+    },
+    {
+      titulo: "Revisión de triajes",
+      descripcion: "Revise o descarte las clasificaciones iniciales registradas.",
+      to: "/admin/triajes",
+    },
+  ],
+};
+
 export function DashboardHome(): JSX.Element {
   const { user } = useAuth();
-
-  const tareasPorRol: Record<string, string[]> = {
-    paciente: [
-      "Registrarse e iniciar sesión (FASE 2, completado)",
-      "Consulta de disponibilidad (FASE 3, completado)",
-      "Reserva y cancelación de citas (FASE 4, completado)",
-      "Triaje inicial (FASE 5, completado)",
-      "Actualización de datos (FASE 6, completado)",
-    ],
-    profesional: [
-      "Consulta de disponibilidad (completado)",
-      "Consultar citas asignadas (completado)",
-      "Consultar el triaje de sus citas (FASE 5, completado)",
-    ],
-    administrador: [
-      "Gestión de cuentas de usuario (FASE 2, completado)",
-      "Gestión de profesionales, especialidades y horarios (FASE 3, completado)",
-      "Gestión de citas (FASE 4, completado)",
-      "Revisión de triajes (FASE 6, completado)",
-    ],
-  };
-
-  const listado = user ? (tareasPorRol[user.role] ?? []) : [];
+  const accesos = user ? (ACCESOS_POR_ROL[user.role] ?? []) : [];
 
   return (
     <>
       <section aria-labelledby="titulo-inicio">
         <h2 id="titulo-inicio">Inicio</h2>
         <p>
-          Su sesión está activa con el rol <strong>{user ? ROLE_LABEL[user.role] : ""}</strong>.
-          Las siguientes capacidades se habilitan a medida que avanza el proyecto.
+          Bienvenido/a, <strong>{user ? user.first_name : ""}</strong>. Desde aquí puede
+          acceder a los servicios que SaludFácil pone a su disposición como{" "}
+          <strong>{user ? ROLE_LABEL[user.role] : ""}</strong>.
         </p>
-        <ul>
-          {listado.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
       </section>
+
+      {accesos.length > 0 && (
+        <div className="health" aria-label="Accesos rápidos">
+          {accesos.map((item) => (
+            <div key={item.titulo}>
+              <p className="banner__eyebrow">{item.titulo}</p>
+              <p>{item.descripcion}</p>
+              <Link className="button button--secondary button--small" to={item.to}>
+                Abrir
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
     </>
   );
 }

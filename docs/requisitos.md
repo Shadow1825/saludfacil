@@ -225,6 +225,12 @@ por RNF-10:
 - **Rol administrador (RF-17, FASE 6)**: marca "Revisado" un triaje pendiente y verifica
   la actualización en la tabla.
 
+Bonus FASE 8: el **Inicio** de cada rol dejó de ser un listado de avance de fases y pasó a
+ser una pantalla de sistema real con tarjetas de acceso directo a cada funcionalidad con su
+trazabilidad RF/HU. Se sembró además data demo coherente (citas próximas e historial de la
+profesional seed, triajes pendientes de revisión) para que todas las tablas del sistema
+muestren información durante la demo.
+
 Ejecución (requiere stack Docker arriba): `npm run test:e2e` (3 navegadores + axe) y
 `npm run audit:axe`. Resultado: **14/14 exitosas**. La suite prepara sus propios datos
 (funcionales, Ley N.° 29733) y reutiliza sesión por usuario virtual.
