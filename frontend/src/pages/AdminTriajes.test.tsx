@@ -72,6 +72,19 @@ describe("AdminTriajesPage (FASE 6, HU-13 / RF-17)", () => {
     expect(patchCall![1].body).toContain('"estado":"revisado"');
   });
 
+  it("usa encabezados de tabla semánticos con scope de columna (RNF-07)", async () => {
+    fetchMock.mockResolvedValueOnce(apiResponse([triaje(1, "pendiente")]));
+
+    render(<AdminTriajesPage />);
+
+    await screen.findByText("Pendiente de revisión");
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers.length).toBeGreaterThan(0);
+    for (const th of headers) {
+      expect(th).toHaveAttribute("scope", "col");
+    }
+  });
+
   it("los triajes ya revisados no ofrecen botones de acción", async () => {
     fetchMock.mockResolvedValueOnce(apiResponse([triaje(1, "revisado"), triaje(2, "descartado")]));
 

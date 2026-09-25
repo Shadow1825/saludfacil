@@ -15,6 +15,10 @@ Computacionales, ciclo 2026-2.
 > trabajo; por decisión explícita se usó una **interpretación documentada** (perfil del
 > paciente y revisión de triajes por el admin), registrada en `docs/requisitos.md` sin
 > alterar identificadores ni otros requisitos.
+>
+> **FASE 7**: el texto de RNF-06 y RNF-07 tampoco estaba disponible; se usó una
+> **interpretación documentada** (errores/logs sin datos personales; accesibilidad y
+> responsive), registrada en `docs/requisitos.md`.
 
 ## Propósito
 
@@ -70,11 +74,10 @@ Por fases, conforme al plan del documento de especificación:
 - **FASE 6 — ✅ Perfil del paciente y revisión administrativa del triaje** actualización de
   datos propios por el paciente (RF-03/HU-15, CA-15.x; DNI y correo inmutables) y revisión
   de triajes por el administrador (RF-17/HU-13, CA-13.x; pendiente/revisado/descartado).
-- FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
-- FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
-- FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.
-- FASE 6 — Estados de atención y administración.
-- FASE 7 — Accesibilidad, manejo de errores, seguridad, responsive, logs seguros.
+- **FASE 7 — ✅ Accesibilidad, errores seguros y responsive** (RNF-06, RNF-07,
+  interpretación documentada): errores 422/500 sin datos personales ni trazas internas,
+  logs con solo el tipo de excepción, cabeceras de seguridad, enlace "Saltar al
+  contenido", HTML semántico y breakpoints responsive con `prefers-reduced-motion`.
 - FASE 8 — Pytest, Playwright, K6, axe, Lighthouse, SonarQube.
 - FASE 9 — Docker definitivo, GitHub Actions, CI/CD, reportes.
 

@@ -2,8 +2,10 @@
 
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
 from app.api.routes import appointments, auth, health, medical, profile, triage, users
 from app.core.config import settings
@@ -43,6 +45,57 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ----- RNF-06: los errores y logs no exponen datos personales ni información interna -----
+
+def _field_from_loc(loc: tuple) -> str:
+    """Une la ruta del campo sin exponer valores (solo la localización)."""
+    return ".".join(str(part) for part in loc if part not in ("body", "query", "path"))
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_handler(
+    _request: Request, exc: RequestValidationError
+) -> JSONResponse:
+    """422 con la localización y el mensaje, SIN `input` (valores enviados).
+
+    El formato por defecto de FastAPI incluye los valores recibidos en `input`;
+    aquí se eliminan para no exponer contraseñas, DNI, correos ni teléfonos (RNF-06).
+    """
+    errores = [
+        {"field": _field_from_loc(err.get("loc", ())), "message": str(err.get("msg", "Valor inválido."))}
+        for err in exc.errors()
+    ]
+    return JSONResponse(status_code=422, content={"detail": errores})
+
+
+@app.exception_handler(Exception)
+async def unhandled_error_handler(_request: Request, exc: Exception) -> JSONResponse:
+    """500 genérico para excepciones no controladas.
+
+    Solo se registra el tipo de la excepción; nunca su mensaje ni argumentos,
+    para evitar que datos personales terminen en los logs (RNF-06 / RNF-11).
+    """
+    get_logger(__name__).error(
+        "Excepción no controlada: %s", type(exc).__name__
+    )
+    return JSONResponse(
+        status_code=500,
+        content={"detail": "Error interno del servidor. Intente nuevamente."},
+    )
+
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    """Cabeceras de seguridad en todas las respuestas (RNF-07: seguridad)."""
+    response = await call_next(request)
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Content-Security-Policy"] = "frame-ancestors 'none'"
+    return response
+
 
 app.include_router(health_router := health.router, prefix="/api")
 app.include_router(auth.router, prefix="/api")

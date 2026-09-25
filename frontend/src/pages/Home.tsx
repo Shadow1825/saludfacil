@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { fetchHealth, HealthResponse } from "../api/client";
+import { SkipLink } from "../components/SkipLink";
 
 type StatusState =
   | { kind: "loading" }
@@ -29,13 +30,14 @@ export function HomePage(): JSX.Element {
 
   return (
     <div className="shell">
+      <SkipLink />
       <header className="banner" role="banner">
         <p className="banner__eyebrow">Clínica Comunitaria del Norte S.A.C.</p>
         <h1>SaludFácil</h1>
         <p className="banner__subtitle">Sistema de Gestión de Citas Médicas y Triaje</p>
       </header>
 
-      <main id="main" className="content" role="main">
+      <main id="main" className="content" role="main" tabIndex={-1}>
         <p>
           Bienvenido a <strong>SaludFácil</strong>. Este proyecto se construye por fases para
           garantizar la trazabilidad con los requisitos del curso{" "}

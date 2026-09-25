@@ -13,7 +13,7 @@
 | 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | ✅ Implementado y probado |
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | ✅ Implementado y probado |
 | 6    | RF-03, RF-17 | ✅ Implementado y probado |
-| 7    | RNF-06, RNF-07 | Pendiente |
+| 7    | RNF-06, RNF-07 | ✅ Implementado y probado |
 
 ## FASE 5 — trazabilidad verificada
 
@@ -148,6 +148,51 @@ Decisiones técnicas (documentadas, sin alterar requisitos):
   vigente; al hacer logout se incrementa, invalidando los tokens anteriores (RF-20).
 - **Hash**: bcrypt con sal (RNF-01).
 - **Validaciones**: en la capa de esquemas Pydantic (RNF-05).
+
+## FASE 7 — accesibilidad, seguridad de errores y responsive
+
+**Alcance y base documental.** El documento oficial asigna a la FASE 7 los requisitos
+RNF-06 y RNF-07. El texto exacto de estos criterios de aceptación no se encontraba
+disponible en el contexto de trabajo; **por decisión explícita del usuario se adoptó la
+siguiente interpretación documentada** (registrada aquí, sin alterar identificadores ni
+otros requisitos): RNF-06 = los errores y los logs no exponen datos personales ni
+información interna; RNF-07 = accesibilidad (HTML semántico, landmarks, foco y
+responsive) en la interfaz.
+
+| Requisito | Tipo        | Interpretación documentada                          | Implementación                                              | Estado |
+|-----------|-------------|-----------------------------------------------------|-------------------------------------------------------------|--------|
+| RNF-06    | Seguridad   | Errores y logs sin datos personales ni internos     | `main.py`: handlers 422 (sin `input`) y 500 genérico; logs solo con el tipo | ✅ pruebas y E2E |
+| RNF-07    | Accesibilidad | HTML semántico, foco, responsive                  | `SkipLink`, `main#main`, `th scope="col"`, `@media` + `prefers-reduced-motion` | ✅ pruebas y build |
+
+Decisiones técnicas (interpretación documentada, aprobada para FASE 7):
+- **RNF-06: los errores y logs no exponen datos personales ni información interna.**
+  - El manejador de `RequestValidationError` devuelve 422 con solo `field` y `message`;
+    **elimina el campo `input`** que FastAPI incluye por defecto (allí viajaban los valores
+    enviados: contraseñas, DNI, correos, teléfonos). Verificado que el cuerpo crudo de un
+    422 de registro no contiene el correo ni la contraseña enviados.
+  - Las excepciones no controladas devuelven 500 genérico
+    `{"detail": "Error interno del servidor. Intente nuevamente."}` sin trazas ni stack.
+  - El registro de la excepción solo incluye **el tipo** (`type(exc).__name__`); nunca el
+    mensaje ni argumentos (reforzando la política de `core/logging.py`, RNF-11).
+  - Cabeceras de seguridad en todas las respuestas (aspecto de seguridad de RNF-07):
+    `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
+    `Referrer-Policy: strict-origin-when-cross-origin` y
+    `Content-Security-Policy: frame-ancestors 'none'`.
+- **RNF-07: accesibilidad y responsive.**
+  - Enlace **Saltar al contenido principal** (`.skip-link`, visible solo al recibir el
+    foco) en Home, autenticación y panel; `main#main` con `role="main"` y `tabIndex={-1}`
+    para recibir el foco del salto.
+  - HTML semántico: landmarks (`banner`, `main`, `nav aria-label`, `contentinfo`),
+    encabezados jerárquicos, tablas con `<th scope="col">`, formularios con `<label htmlFor>`
+    asociado, mensajes de estado con `role="status"`/`aria-live` y errores con `role="alert"`.
+  - Responsive en `index.css`: punto de quiebre 700px (banner, botones a ancho completo,
+    padding) y 480px (navegación en columna, tipografía de formularios), manteniendo el
+    desplazamiento horizontal de tablas; `prefers-reduced-motion: reduce` para usuarios con
+    movimiento reducido.
+- **Verificación Docker/PostgreSQL (E2E FASE 7)**: `/api/health` expone las cuatro
+  cabeceras de seguridad; registro con DNI inválido devuelve 422 con
+  `{"detail":[{"field":"dni","message":"..."}]}` sin `input` ni valores enviados; login con
+  credenciales erróneas devuelve 401 con mensaje genérico.
 
 ## Matriz funcional planificada (oficial)
 

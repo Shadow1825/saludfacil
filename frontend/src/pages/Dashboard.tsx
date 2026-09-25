@@ -1,5 +1,6 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
+import { SkipLink } from "../components/SkipLink";
 import { useAuth } from "../auth/AuthContext";
 import { ROLE_LABEL } from "../types/auth";
 
@@ -20,6 +21,7 @@ export function DashboardLayout(): JSX.Element {
 
   return (
     <div className="shell">
+      <SkipLink />
       <header className="banner banner--compact" role="banner">
         <div className="banner__row">
           <div>
@@ -76,7 +78,7 @@ export function DashboardLayout(): JSX.Element {
         </nav>
       </header>
 
-      <main id="main" className="content" role="main">
+      <main id="main" className="content" role="main" tabIndex={-1}>
         <Outlet />
       </main>
 

@@ -313,8 +313,85 @@ th {
   border: 0;
 }
 
+/* ---------- FASE 7 (RNF-07): accesibilidad y responsive ---------- */
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 0.75rem;
+  z-index: 10;
+  background: var(--color-surface);
+  color: var(--color-primary-dark);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--border-radius);
+  padding: 0.6rem 1rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  top: 0.75rem;
+}
+
+main[tabindex="-1"] {
+  outline: none;
+}
+
+@media (max-width: 700px) {
+  .content {
+    padding: 1.25rem 0.9rem 2rem;
+  }
+
+  .banner {
+    padding: 1.75rem 0.9rem;
+  }
+
+  .banner--compact {
+    padding: 0.9rem 0.9rem;
+  }
+
+  .banner__row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .card {
+    padding: 1rem 1.1rem;
+  }
+
+  .actions-row .button {
+    width: 100%;
+    text-align: center;
+  }
+
+  th,
+  td {
+    padding: 0.5rem 0.6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @media (max-width: 480px) {
   .banner h1 {
     font-size: 1.75rem;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .field label,
+  .button {
+    font-size: 1rem;
   }
 }

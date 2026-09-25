@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import { ApiError } from "../api/client";
+import { SkipLink } from "../components/SkipLink";
 import { useAuth } from "../auth/AuthContext";
 
 export function LoginPage(): JSX.Element {
@@ -31,8 +32,10 @@ export function LoginPage(): JSX.Element {
   }
 
   return (
-    <main className="content auth" role="main">
-      <section className="card card--narrow" aria-labelledby="titulo-login">
+    <>
+      <SkipLink />
+      <main id="main" className="content auth" role="main" tabIndex={-1}>
+        <section className="card card--narrow" aria-labelledby="titulo-login">
         <h1 id="titulo-login">Iniciar sesión</h1>
         <p>
           Acceda a SaludFácil con su correo electrónico y contraseña.
@@ -78,7 +81,8 @@ export function LoginPage(): JSX.Element {
           ¿No tiene una cuenta? <Link to="/registro">Regístrese aquí</Link>
         </p>
       </section>
-    </main>
+      </main>
+    </>
   );
 }
 
@@ -125,8 +129,10 @@ export function RegisterPage(): JSX.Element {
   }
 
   return (
-    <main className="content auth" role="main">
-      <section className="card card--narrow" aria-labelledby="titulo-registro">
+    <>
+      <SkipLink />
+      <main id="main" className="content auth" role="main" tabIndex={-1}>
+        <section className="card card--narrow" aria-labelledby="titulo-registro">
         <h1 id="titulo-registro">Crear cuenta de paciente</h1>
         <p>Complete el formulario para registrarse en SaludFácil.</p>
 
@@ -219,6 +225,7 @@ export function RegisterPage(): JSX.Element {
           ¿Ya tiene una cuenta? <Link to="/login">Inicie sesión</Link>
         </p>
       </section>
-    </main>
+      </main>
+    </>
   );
 }
