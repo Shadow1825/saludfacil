@@ -12,6 +12,19 @@ test.describe("Rol profesional", () => {
     await expect(fila).toContainText("tos");
     await expect(fila).toContainText("Pendiente de revisión");
   });
+
+  test("consulta sus citas asignadas (HU-08 / RF-14)", async ({ page, request }) => {
+    const setup = await crearCitaConTriajeApi(request);
+
+    await ingresarPorUi(page, PROFESIONAL.email, PROFESIONAL.password);
+    await page.goto("/profesional/citas");
+    const fila = page
+      .getByRole("row")
+      .filter({ hasText: setup.slot.fecha })
+      .filter({ hasText: setup.slot.hora })
+      .first();
+    await expect(fila).toContainText("Reservada");
+  });
 });
 
 test.describe("Rol administrador (RF-17 / FASE 6)", () => {

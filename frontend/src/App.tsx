@@ -16,6 +16,7 @@ import { HomePage } from "./pages/Home";
 import { MisCitasPage } from "./pages/MisCitas";
 import { MisTriajesPage } from "./pages/MisTriajes";
 import { PerfilPage } from "./pages/Perfil";
+import { ProfesionalCitasPage } from "./pages/ProfesionalCitas";
 import { ReservarCitaPage } from "./pages/ReservarCita";
 import { TriajePage } from "./pages/Triaje";
 
@@ -70,6 +71,14 @@ export default function App(): JSX.Element {
               element={
                 <ProtectedRoute roles={["profesional"]}>
                   <MisTriajesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="profesional/citas"
+              element={
+                <ProtectedRoute roles={["profesional"]}>
+                  <ProfesionalCitasPage />
                 </ProtectedRoute>
               }
             />

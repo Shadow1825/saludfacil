@@ -58,8 +58,8 @@ export function DashboardLayout(): JSX.Element {
           {perfil === "profesional" && (
             <>
               <DashboardLink to="/" label="Inicio" />
-              <span className="nav__pending">Disponibilidad (FASE 5)</span>
-              <span className="nav__pending">Mis citas (FASE 4-6)</span>
+              <DashboardLink to="/disponibilidad" label="Disponibilidad" />
+              <DashboardLink to="/profesional/citas" label="Mis citas" />
               <DashboardLink to="/profesional/triajes" label="Triaje de citas" />
             </>
           )}
@@ -103,9 +103,9 @@ export function DashboardHome(): JSX.Element {
       "Actualización de datos (FASE 6, completado)",
     ],
     profesional: [
-      "Consultar citas asignadas (FASE 4-6)",
-      "Consultar resultado de triaje de sus citas (FASE 5, completado)",
-      "Actualizar estado de atención (FASE 6)",
+      "Consulta de disponibilidad (completado)",
+      "Consultar citas asignadas (completado)",
+      "Consultar el triaje de sus citas (FASE 5, completado)",
     ],
     administrador: [
       "Gestión de cuentas de usuario (FASE 2, completado)",

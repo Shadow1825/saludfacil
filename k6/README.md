@@ -75,4 +75,14 @@ workers el p95 quedó en 0.27 s. Resumen crudo exportado en `docs/fase8/k6-summa
 
 Los usuarios `k6carga*@test.com` son datos de prueba ficticios; los slots usados son
 horarios reales libres de la profesional seed María López (id 1), sin modificar datos de
-usuarios reales.
+usuarios reales. Cada corrida reserva citas **futuras** (hasta 180 días a la vista). Para
+dejar la Base de Datos limpia antes de una demo (quitar citas/triajes/usuarios de prueba
+de k6 y e2e), ejecutar en PostgreSQL:
+
+```sql
+DELETE FROM triajes t USING citas c, usuarios u
+  WHERE t.cita_id=c.id AND c.paciente_id=u.id AND (u.email LIKE 'k6carga%@test.com' OR u.email LIKE 'e2e%');
+DELETE FROM citas c USING usuarios u
+  WHERE c.paciente_id=u.id AND (u.email LIKE 'k6carga%@test.com' OR u.email LIKE 'e2e%');
+DELETE FROM usuarios WHERE email LIKE 'k6carga%@test.com' OR email LIKE 'e2e%';
+```

@@ -218,6 +218,32 @@ def test_mis_citas_solo_propias(client: TestClient, db: Session) -> None:
     assert citas_p2.json() == []  # CA-05.1: cada paciente ve solo las suyas
 
 
+def test_profesional_consulta_sus_citas(client: TestClient, db: Session) -> None:
+    admin = _crear_usuario(db, "admin@test.com", UserRole.ADMINISTRADOR, "20000002")
+    _crear_usuario(db, "p1@test.com", UserRole.PACIENTE, "20000003")
+    admin_tok = _token(client, "admin@test.com")
+    p1 = _token(client, "p1@test.com")
+
+    dia = 3
+    fecha, _, prof_id = _setup_extras(client, db, admin_tok, dia)
+    prof_tok = _token(client, f"doc{dia}@prof.com")
+
+    cita = client.post(
+        "/api/appointments",
+        json={"professional_id": prof_id, "fecha": fecha.isoformat(), "hora_inicio": "08:00"},
+        headers=_auth(p1),
+    )
+    assert cita.status_code == 201, cita.text
+
+    # RF-14 / HU-08: el profesional consulta solo las citas que tiene asignadas.
+    mis_citas = client.get("/api/appointments", headers=_auth(prof_tok))
+    assert mis_citas.status_code == 200, mis_citas.text
+    citas = mis_citas.json()
+    assert len(citas) == 1
+    assert citas[0]["professional_id"] == prof_id
+    assert citas[0]["paciente"]  # el paciente aparece en el detalle de la cita
+
+
 # --------------------------------------------------------------------------
 # RF-11 / HU-06 — CANCELACIÓN (libera horario)
 # --------------------------------------------------------------------------

@@ -208,7 +208,7 @@ Docker en ejecución (frontend `:3000`, API `:8000`).
 |-----------|-------------|-----------------------------------------|-------------------------------------------------|--------|
 | RNF-04    | K6          | 50 usuarios virtuales concurrentes, p95 < 2 s en login/horarios/reserva, error < 1 % | 50 VUs × 2 iteraciones, 250/250 checks OK, p95: login 271 ms, horarios 13 ms, reserva 34 ms, error 0.00 % | ✅ cumple |
 | RNF-07    | axe (WCAG 2.2 AA) + Lighthouse | sin violaciones serias/críticas; Lighthouse accesibilidad ≥ 90 | axe: 0 violaciones en 8 pantallas; Lighthouse: **100** en /, /login y /registro | ✅ cumple |
-| RNF-10    | Playwright | funcionamiento en últimas 2 versiones estables de Chrome, Firefox y Edge | 11/11 pruebas (cromo, msedge y firefox + axe) | ✅ cumple |
+| RNF-10    | Playwright | funcionamiento en últimas 2 versiones estables de Chrome, Firefox y Edge | 14/14 pruebas (chrome, msedge y firefox + axe) | ✅ cumple |
 | RNF-08    | SonarQube | mantenibilidad A                          | En ejecución local: sin Java y con disco C: casi lleno; se documenta el procedimiento Docker y se difiere la corrida a FASE 9/CI | ⏳ diferido (timebox) |
 
 **Pruebas funcionales (Playwright).** `frontend/e2e/` define los flujos críticos de los
@@ -218,13 +218,15 @@ por RNF-10:
 - **Paciente (RF-01/07/09/10/12/13/03)**: registro por formulario → consulta de
   disponibilidad → reserva real de un horario disponible → consulta de "Mis citas" →
   triaje con clasificación → actualización del perfil.
-- **Rol profesional (RF-16)**: inicia sesión con la profesional asignada y consulta el
-  triaje de su cita (estado "Pendiente de revisión").
+- **Rol profesional**: inicia sesión con la profesional asignada, consulta **sus citas
+  asignadas** (pantalla "Mis citas" de profesional, HU-08/RF-14) y el triaje de su cita
+  (estado "Pendiente de revisión"). El menú profesional quedó completado en FASE 8
+  (enlaces "Disponibilidad" y "Mis citas" activos, antes marcados como pendientes).
 - **Rol administrador (RF-17, FASE 6)**: marca "Revisado" un triaje pendiente y verifica
   la actualización en la tabla.
 
 Ejecución (requiere stack Docker arriba): `npm run test:e2e` (3 navegadores + axe) y
-`npm run audit:axe`. Resultado: **11/11 exitosas**. La suite prepara sus propios datos
+`npm run audit:axe`. Resultado: **14/14 exitosas**. La suite prepara sus propios datos
 (funcionales, Ley N.° 29733) y reutiliza sesión por usuario virtual.
 
 **Accesibilidad (axe + Lighthouse).** La auditoría axe escanea 8 pantallas (públicas y
@@ -271,6 +273,18 @@ documentado para ejecutarlo en CI (FASE 9): servidor `sonarqube:lts-community` y
 `sonarsource/sonar-scanner-cli` (ambos contenedores, sin Java local), con objetivo de
 mantenibilidad **A** (RNF-08): estructura por capas ya modular (`models`/`schemas`/`routes`/
 `core`), sin duplicación evidente de seguridad. La corrida queda registrada como pendiente.
+
+**Higiene de datos de prueba.** Las corridas de K6 reservan citas **futuras** reales para
+usuarios `k6carga*@test.com`, y la suite e2e crea usuarios `e2e*`. Antes de una
+presentación/demo conviene dejarlos limpios (en PostgreSQL):
+
+```sql
+DELETE FROM triajes t USING citas c, usuarios u
+  WHERE t.cita_id=c.id AND c.paciente_id=u.id AND (u.email LIKE 'k6carga%@test.com' OR u.email LIKE 'e2e%');
+DELETE FROM citas c USING usuarios u
+  WHERE c.paciente_id=u.id AND (u.email LIKE 'k6carga%@test.com' OR u.email LIKE 'e2e%');
+DELETE FROM usuarios WHERE email LIKE 'k6carga%@test.com' OR email LIKE 'e2e%';
+```
 
 **Verificación de regresión.** Tras los cambios de FASE 8 se re-ejecutaron las suites
 unitarias: pytest **89/89** y vitest **24/24** con build de producción OK, sin regresiones.

@@ -21,8 +21,9 @@ test.describe("Flujo crítico del paciente (RF-01/07/09/10/12/13/03)", () => {
     // RF-07 / HU-03: disponibilidad (CA-03.1 a CA-03.3)
     await page.goto("/disponibilidad");
     await expect(page.getByRole("heading", { name: /disponibilidad/i })).toBeVisible();
-    const especialidades = await page.getByRole("combobox").first().locator("option").count();
-    expect(especialidades).toBeGreaterThan(1);
+    const especialidades = page.getByRole("combobox").first().locator("option");
+    await expect(especialidades.filter({ hasText: "Medicina General" })).toHaveCount(1);
+    expect(await especialidades.count()).toBeGreaterThan(1);
 
     // Login real (CA-02.x) para preparar datos y resolver un slot disponible
     const loginRes = await request.post("http://localhost:8000/api/auth/login", {

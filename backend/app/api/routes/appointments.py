@@ -167,11 +167,14 @@ def list_appointments(
     if _.role == UserRole.PACIENTE:
         query = select(Cita).where(Cita.paciente_id == _.id)
         profesional_id = None  # el paciente no filtra por profesional (pantalla propia)
+    elif _.role == UserRole.PROFESIONAL:
+        prof = db.execute(select(Profesional).where(Profesional.user_id == _.id)).scalar_one_or_none()
+        if prof is None:
+            raise HTTPException(status_code=403, detail="Perfil profesional no encontrado.")
+        query = select(Cita).where(Cita.professional_id == prof.id)
+        profesional_id = None  # el profesional solo ve sus citas asignadas (RF-14 / HU-08)
     elif _.role == UserRole.ADMINISTRADOR:
         query = select(Cita)
-    else:
-        # El profesional tendrá su consulta en FASE 6 (estado de atención).
-        raise HTTPException(status_code=403, detail="Su rol aún no tiene acceso a citas.")
 
     if profesional_id is not None:
         query = query.where(Cita.professional_id == profesional_id)
