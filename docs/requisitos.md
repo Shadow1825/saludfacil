@@ -12,7 +12,7 @@
 | 3    | RF-04, RF-05, RF-06, RF-07, RF-08 | ✅ Implementado y probado |
 | 4    | RF-09, RF-10, RF-11, RF-21; RNF-09 | ✅ Implementado y probado |
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | ✅ Implementado y probado |
-| 6    | RF-03, RF-17 | Pendiente |
+| 6    | RF-03, RF-17 | ✅ Implementado y probado |
 | 7    | RNF-06, RNF-07 | Pendiente |
 
 ## FASE 5 — trazabilidad verificada
@@ -50,6 +50,46 @@ Decisiones técnicas (documentadas, sin alterar requisitos):
 - **Acceso**: el paciente solo ve los suyos; el profesional, solo los de sus citas (vía
   `citas.professional_id == profesionales.user_id`); el administrador tiene acceso de solo
   lectura al sistema completo (la revisión oficial RF-17 corresponde a FASE 6).
+
+## FASE 6 — trazabilidad verificada
+
+**Alcance y base documental.** El documento oficial asigna a la FASE 6 los requisitos
+RF-03 y RF-17. El texto exacto de los criterios CA-15.x y CA-13.x no se encontraba
+disponible en el contexto de trabajo; **por decisión explícita del usuario se adoptó la
+siguiente interpretación documentada** (registrada aquí, sin modificar identificadores ni
+demás requisitos): RF-03 = el paciente actualiza sus propios datos; RF-17 = el administrador
+revisa los triajes marcándolos como revisado o descartado.
+
+| Requisito | HU  | Criterios        | CP  | Implementación                              | Estado |
+|-----------|-----|------------------|-----|---------------------------------------------|--------|
+| RF-03     | HU-15 | CA-15.1–15.4    | CP-03 | `api/routes/profile.py: PATCH /api/profile` (solo paciente) | ✅ pruebas 200/422/403/401 |
+| RF-17     | HU-13 | CA-13.1–13.3    | CP-17 | `api/routes/triage.py: PATCH /api/triage/{id}/revision` (solo admin) | ✅ pruebas 200/403/404/422 |
+
+Decisiones técnicas (interpretación documentada, aprobada para FASE 6):
+- **RF-03 / HU-15 (perfil del paciente)**:
+  - Se actualizan nombre, apellido, teléfono y (opcionalmente) la contraseña.
+  - CA-15.1: la respuesta devuelve los nuevos valores y confirma la operación (200).
+  - CA-15.2: validaciones iguales al registro (RNF-05): teléfono ≥ 7 dígitos numéricos,
+    nueva contraseña ≥ 8 caracteres; cambiar la clave exige la contraseña actual correcta
+    (422 si es incorrecta o si falta alguno de los dos campos).
+  - CA-15.3: DNI y correo son **inmutables por el propio usuario**; el esquema usa
+    `extra="forbid"`, por lo que intentar enviarlos produce 422.
+  - La sesión activa se mantiene válida tras el cambio de contraseña (no se incrementa
+    `token_version`); decisión documentada.
+- **RF-17 / HU-13 (revisión administrativa del triaje)**:
+  - Cada triaje tiene un `estado_revision` con tres estados: `pendiente` (al nacer),
+    `revisado` (el administrador confirma el registro) y `descartado` (datos inconsistentes).
+  - Solo el administrador cambia el estado (CA-13.3): paciente o profesional → 403
+    (dependencia `require_roles(ADMINISTRADOR)`).
+  - El estado es visible para paciente y profesional en sus consultas (columna "Revisión").
+  - Triaje inexistente → 404; estado fuera del conjunto → 422.
+- **Verificación Docker/PostgreSQL (E2E FASE 6)**: 201/200 en actualización de perfil;
+  422 en DNI/email/telefono/clave incorrecta; cambio de contraseña y nuevo login con la
+  clave; 403 para admin y profesional editando su perfil; triaje nuevo en `pendiente`;
+  403 de paciente y profesional al intentar revisar; `revisado` y `descartado` con 200 por
+  el admin; profesional asignado a la cita ve el estado; 404 y 422 en casos inválidos.
+- **Persistencia**: se agregó la columna `estado_revision` a `triajes`; al tratarse de un
+  cambio de esquema en el desarrollo local se recreó el volumen de PostgreSQL (`down -v`).
 
 ## FASE 4 — trazabilidad verificada
 

@@ -1,4 +1,4 @@
-import { get, post } from "./client";
+import { get, patch, post } from "./client";
 import type { User } from "../types/auth";
 
 export interface RegisterData {
@@ -13,6 +13,14 @@ export interface RegisterData {
 export interface LoginData {
   email: string;
   password: string;
+}
+
+export interface ProfileUpdateData {
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  current_password?: string;
+  new_password?: string;
 }
 
 export interface TokenResponse {
@@ -30,6 +38,10 @@ export function login(data: LoginData): Promise<TokenResponse> {
 
 export function fetchMe(): Promise<User> {
   return get<User>("/auth/me");
+}
+
+export function updateProfile(data: ProfileUpdateData): Promise<User> {
+  return patch<User>("/profile", data);
 }
 
 export function logout(): Promise<{ message: string }> {

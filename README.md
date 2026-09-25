@@ -10,6 +10,11 @@ Computacionales, ciclo 2026-2.
 > El documento de requisitos (con los identificadores RF, RNF, RES, HU, CA y CP) es la
 > **fuente de verdad** del sistema. Esta implementación mantiene trazabilidad estricta
 > entre requisitos, historias de usuario, criterios de aceptación, código y pruebas.
+>
+> **FASE 6**: los criterios CA-15.x y CA-13.x no estaban disponibles en el contexto de
+> trabajo; por decisión explícita se usó una **interpretación documentada** (perfil del
+> paciente y revisión de triajes por el admin), registrada en `docs/requisitos.md` sin
+> alterar identificadores ni otros requisitos.
 
 ## Propósito
 
@@ -62,6 +67,9 @@ Por fases, conforme al plan del documento de especificación:
 - **FASE 5 — ✅ Triaje inicial** registro de síntomas, clasificación inicial determinista
   (reglas oficiales R1-R6: Alta/Media/Baja) y consulta por paciente y profesional
   (RF-12 a RF-16; HU-07/HU-08/HU-09/HU-10 y CA-07 a CA-10).
+- **FASE 6 — ✅ Perfil del paciente y revisión administrativa del triaje** actualización de
+  datos propios por el paciente (RF-03/HU-15, CA-15.x; DNI y correo inmutables) y revisión
+  de triajes por el administrador (RF-17/HU-13, CA-13.x; pendiente/revisado/descartado).
 - FASE 3 — Profesionales, especialidades, horarios, disponibilidad.
 - FASE 4 — Citas, reserva, concurrencia, consulta, cancelación.
 - FASE 5 — Síntomas, triaje, clasificación, resultado, consulta profesional.

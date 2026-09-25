@@ -1,4 +1,8 @@
-"""Esquemas del módulo de triaje (FASE 5): RF-12 a RF-16."""
+"""Esquemas del módulo de triaje (FASE 5) y revisión administrativa (FASE 6).
+
+- RF-12 a RF-16 (FASE 5): registro, consulta, síncrona y determinismo.
+- RF-17 / HU-13 / CA-13.x (FASE 6): revisión administrativa (revisado/descartado).
+"""
 
 from datetime import datetime
 
@@ -17,6 +21,16 @@ MENSAJE_NO_DIAGNOSTICO = (
 CLASIFICACION_LABEL1 = CLASIFICACION_LABEL
 
 Severidad = Literal["leve", "moderada", "intensa"]
+
+# Estados de la revisión administrativa del triaje (RF-17 / HU-13 / CA-13.x).
+ESTADOS_REVISION = ("pendiente", "revisado", "descartado")
+ESTADO_REVISION_LABEL = {
+    "pendiente": "Pendiente de revisión",
+    "revisado": "Revisado",
+    "descartado": "Descartado",
+}
+
+RevisionEstado = Literal["revisado", "descartado"]
 
 
 class SintomaInput(BaseModel):
@@ -61,6 +75,16 @@ class TriageCreate(BaseModel):
         return self
 
 
+class RevisionTriaje(BaseModel):
+    """Resolución de la revisión administrativa de un triaje (RF-17 / CA-13.x).
+
+    El administrador confirma el registro (revisado) o lo descarta cuando los
+    datos reportados son inconsistentes (descartado).
+    """
+
+    estado: RevisionEstado
+
+
 def _time_str(value) -> str:
     return value.strftime("%H:%M") if hasattr(value, "strftime") else str(value)
 
@@ -82,6 +106,15 @@ def serialize_triage(triaje, paciente, cita, profesional, especialidad) -> dict:
         "sintomas": triaje.sintomas,
         "es_diagnostico": False,
         "mensaje": MENSAJE_NO_DIAGNOSTICO,
+        "estado_revision": triaje.estado_revision,  # pendiente|revisado|descartado (RF-17)
+        "estado_revision_label": ESTADO_REVISION_LABEL.get(
+            triaje.estado_revision, triaje.estado_revision
+        ),
+        "revisado_en": (
+            triaje.creado_por_admin_en.isoformat()
+            if isinstance(triaje.creado_por_admin_en, datetime)
+            else None
+        ),
         "created_at": triaje.created_at.isoformat() if isinstance(triaje.created_at, datetime) else str(triaje.created_at),
     }
 
@@ -91,6 +124,10 @@ __all__ = [
     "MENSAJE_NO_DIAGNOSTICO",
     "SintomaInput",
     "TriageCreate",
+    "RevisionTriaje",
     "Severidad",
+    "RevisionEstado",
+    "ESTADOS_REVISION",
+    "ESTADO_REVISION_LABEL",
     "serialize_triage",
 ]

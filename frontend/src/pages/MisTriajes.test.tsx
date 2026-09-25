@@ -32,6 +32,9 @@ describe("MisTriajesPage (FASE 5, RU-08 / RF-14)", () => {
             sintomas: [{ nombre: "tos", severidad: "leve" }],
             es_diagnostico: false,
             mensaje: "Clasificación inicial orientativa.",
+            estado_revision: "pendiente",
+            estado_revision_label: "Pendiente de revisión",
+            revisado_en: null,
             created_at: "2026-09-24T18:00:00",
           },
           {
@@ -49,6 +52,9 @@ describe("MisTriajesPage (FASE 5, RU-08 / RF-14)", () => {
             sintomas: [{ nombre: "dificultad respiratoria", severidad: "intensa" }],
             es_diagnostico: false,
             mensaje: "Clasificación inicial orientativa.",
+            estado_revision: "revisado",
+            estado_revision_label: "Revisado",
+            revisado_en: null,
             created_at: "2026-09-24T18:05:00",
           },
         ]),
@@ -60,6 +66,7 @@ describe("MisTriajesPage (FASE 5, RU-08 / RF-14)", () => {
     expect(screen.getByText("Ana Pérez")).toBeTruthy();
     expect(screen.getByText("Baja")).toBeTruthy();
     expect(screen.getByText("Alta")).toBeTruthy();
+    expect(screen.getByText("Revisado")).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/api/triage"),
       expect.objectContaining({ method: "GET" }),

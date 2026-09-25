@@ -30,7 +30,14 @@ from app.schemas.medical import (
     serialize_profesional,
     serialize_schedule,
 )
-from app.schemas.triage import SintomaInput, TriageCreate, serialize_triage
+from app.schemas.profile import ProfileUpdateRequest
+from app.schemas.triage import (
+    ESTADO_REVISION_LABEL,
+    SintomaInput,
+    RevisionTriaje,
+    TriageCreate,
+    serialize_triage,
+)
 
 __all__ = [
     "AdminCitaEstado",
@@ -38,6 +45,7 @@ __all__ = [
     "AdminUserUpdateRequest",
     "AvailableSlot",
     "CitaCreate",
+    "ESTADO_REVISION_LABEL",
     "EspecialidadCreate",
     "EspecialidadOut",
     "EspecialidadUpdate",
@@ -46,6 +54,8 @@ __all__ = [
     "ProfessionalCreate",
     "ProfessionalOut",
     "ProfessionalUpdate",
+    "ProfileUpdateRequest",
+    "RevisionTriaje",
     "ScheduleCreate",
     "ScheduleOut",
     "ScheduleUpdate",

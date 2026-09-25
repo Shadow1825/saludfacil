@@ -7,6 +7,7 @@ import { AdminCitasPage } from "./pages/AdminCitas";
 import { AdminProfessionalsPage } from "./pages/AdminProfessionals";
 import { AdminSchedulesPage } from "./pages/AdminSchedules";
 import { AdminSpecialtiesPage } from "./pages/AdminSpecialties";
+import { AdminTriajesPage } from "./pages/AdminTriajes";
 import { AdminUsersPage } from "./pages/AdminUsers";
 import { LoginPage, RegisterPage } from "./pages/AuthPages";
 import { DashboardHome, DashboardLayout } from "./pages/Dashboard";
@@ -14,6 +15,7 @@ import { DisponibilidadPage } from "./pages/Disponibilidad";
 import { HomePage } from "./pages/Home";
 import { MisCitasPage } from "./pages/MisCitas";
 import { MisTriajesPage } from "./pages/MisTriajes";
+import { PerfilPage } from "./pages/Perfil";
 import { ReservarCitaPage } from "./pages/ReservarCita";
 import { TriajePage } from "./pages/Triaje";
 
@@ -68,6 +70,22 @@ export default function App(): JSX.Element {
               element={
                 <ProtectedRoute roles={["profesional"]}>
                   <MisTriajesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="perfil"
+              element={
+                <ProtectedRoute roles={["paciente"]}>
+                  <PerfilPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="admin/triajes"
+              element={
+                <ProtectedRoute roles={["administrador"]}>
+                  <AdminTriajesPage />
                 </ProtectedRoute>
               }
             />

@@ -39,6 +39,7 @@ export function MisTriajesPage(): JSX.Element {
                   <th scope="col">Especialidad</th>
                   <th scope="col">Clasificación inicial</th>
                   <th scope="col">Síntomas</th>
+                  <th scope="col">Revisión</th>
                 </tr>
               </thead>
               <tbody>
@@ -51,6 +52,7 @@ export function MisTriajesPage(): JSX.Element {
                     <td>{t.specialty_name}</td>
                     <td>{t.resultado}</td>
                     <td>{t.sintomas.map((s) => `${s.nombre} (${s.severidad})`).join(", ")}</td>
+                    <td>{t.estado_revision_label}</td>
                   </tr>
                 ))}
               </tbody>

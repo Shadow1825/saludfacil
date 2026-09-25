@@ -1,10 +1,11 @@
-"""Rutas del triaje inicial (FASE 5).
+"""Rutas del triaje inicial (FASE 5) y su revisión administrativa (FASE 6).
 
 - RF-12 / HU-07 / CA-07.x: POST /api/triage (registro de síntomas + clasificación).
 - RF-13 / HU-08 / CA-08.1–08.4: el paciente consulta su clasificación inicial.
 - RF-14 / HU-08 / CA-08.2–08.4: el profesional consulta solo el de sus citas.
 - RF-15 / HU-09 / CA-09.x: clasificación entregada de inmediato en la respuesta.
 - RF-16 / HU-10 / CA-10.x: determinismo (mismos datos → mismo resultado).
+- RF-17 / HU-13 / CA-13.x: PATCH /api/triage/{id}/revision (solo administrador).
 """
 
 from datetime import date, datetime, timezone
@@ -17,7 +18,7 @@ from sqlalchemy.orm import Session
 from app.core.logging import get_logger
 from app.db.session import get_db
 from app.models import Cita, CitaEstado, Especialidad, Profesional, Triaje, User, UserRole
-from app.schemas.triage import TriageCreate, serialize_triage
+from app.schemas.triage import RevisionTriaje, TriageCreate, serialize_triage
 from app.services.security import get_current_user, require_roles
 from app.services.triage import clasificar
 
@@ -98,7 +99,7 @@ def list_triage(db: SessionDep, user: CurrentUser):
     """Triajes según rol:
     - paciente: solo los suyos (RF-13 / CA-08.1-08.4).
     - profesional: solo los de sus citas autorizadas (RF-14 / CA-08.2-08.4).
-    - administrador: lectura de todo el sistema (revisión; RF-17 será FASE 6).
+    - administrador: lectura de todo el sistema para la revisión (RF-17 / HU-13).
     """
     if user.role == UserRole.PACIENTE:
         query = select(Triaje).where(Triaje.paciente_id == user.id)
@@ -144,6 +145,34 @@ def get_triage(triage_id: int, db: SessionDep, user: CurrentUser):
     if not puede_ver:
         raise HTTPException(status_code=403, detail="No tiene permisos para consultar este triaje.")
 
+    return _armar(triaje, db)
+
+
+# ---------------------------------------------------------------------------
+# REVISIÓN ADMINISTRATIVA (RF-17 / HU-13 / CA-13.x)
+# ---------------------------------------------------------------------------
+@router.patch("/triage/{triage_id}/revision", status_code=200)
+def revisar_triaje(
+    triage_id: int,
+    payload: RevisionTriaje,
+    db: SessionDep,
+    user: User = Depends(require_roles(UserRole.ADMINISTRADOR)),
+):
+    """El administrador revisa un triaje: lo confirma (revisado) o lo descarta.
+
+    - CA-13.1: marca como "revisado" (confirma el registro).
+    - CA-13.2: marca como "descartado" (datos inconsistentes).
+    - CA-13.3: paciente o profesional no pueden cambiar el estado (403).
+    """
+    triaje = db.get(Triaje, triage_id)
+    if not triaje:
+        raise HTTPException(status_code=404, detail="Triaje no encontrado.")
+
+    triaje.estado_revision = payload.estado
+    triaje.creado_por_admin_en = datetime.now(timezone.utc)  # momento de la revisión
+    db.commit()
+    db.refresh(triaje)
+    logger.info("Triaje %s marcado como %s por el administrador.", triaje.id, payload.estado)
     return _armar(triaje, db)
 
 

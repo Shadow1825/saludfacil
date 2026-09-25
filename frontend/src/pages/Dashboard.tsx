@@ -49,7 +49,7 @@ export function DashboardLayout(): JSX.Element {
               <DashboardLink to="/reservar" label="Reservar cita" />
               <DashboardLink to="/mis-citas" label="Mis citas" />
               <DashboardLink to="/triaje" label="Triaje" />
-              <span className="nav__pending">Mi perfil (FASE 6)</span>
+              <DashboardLink to="/perfil" label="Mi perfil" />
             </>
           )}
 
@@ -70,6 +70,7 @@ export function DashboardLayout(): JSX.Element {
               <DashboardLink to="/admin/especialidades" label="Especialidades" />
               <DashboardLink to="/admin/horarios" label="Horarios" />
               <DashboardLink to="/admin/citas" label="Citas" />
+              <DashboardLink to="/admin/triajes" label="Triajes" />
             </>
           )}
         </nav>
@@ -97,7 +98,7 @@ export function DashboardHome(): JSX.Element {
       "Consulta de disponibilidad (FASE 3, completado)",
       "Reserva y cancelación de citas (FASE 4, completado)",
       "Triaje inicial (FASE 5, completado)",
-      "Actualización de datos (FASE 6)",
+      "Actualización de datos (FASE 6, completado)",
     ],
     profesional: [
       "Consultar citas asignadas (FASE 4-6)",
@@ -108,6 +109,7 @@ export function DashboardHome(): JSX.Element {
       "Gestión de cuentas de usuario (FASE 2, completado)",
       "Gestión de profesionales, especialidades y horarios (FASE 3, completado)",
       "Gestión de citas (FASE 4, completado)",
+      "Revisión de triajes (FASE 6, completado)",
     ],
   };
 

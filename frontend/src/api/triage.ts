@@ -1,7 +1,8 @@
-import { get, post } from "./client";
+import { get, patch, post } from "./client";
 
 export type Severidad = "leve" | "moderada" | "intensa";
 export type Clasificacion = "alta" | "media" | "baja";
+export type EstadoRevision = "pendiente" | "revisado" | "descartado";
 
 export interface Sintoma {
   nombre: string;
@@ -23,6 +24,9 @@ export interface Triage {
   sintomas: Sintoma[];
   es_diagnostico: boolean;
   mensaje: string;
+  estado_revision: EstadoRevision;
+  estado_revision_label: string;
+  revisado_en: string | null;
   created_at: string;
 }
 
@@ -30,6 +34,12 @@ export const CLASIFICACION_LABEL: Record<Clasificacion, string> = {
   alta: "Alta",
   media: "Media",
   baja: "Baja",
+};
+
+export const ESTADO_REVISION_LABEL: Record<EstadoRevision, string> = {
+  pendiente: "Pendiente de revisión",
+  revisado: "Revisado",
+  descartado: "Descartado",
 };
 
 // Síntomas de las reglas R1-R3 (especificación oficial del triaje).
@@ -45,4 +55,8 @@ export function createTriaje(citaId: number, sintomas: Sintoma[]): Promise<Triag
 
 export function listTriajes(): Promise<Triage[]> {
   return get<Triage[]>("/triage");
+}
+
+export function updateTriajeRevision(citaId: number, estado: "revisado" | "descartado"): Promise<Triage> {
+  return patch<Triage>(`/triage/${citaId}/revision`, { estado });
 }
