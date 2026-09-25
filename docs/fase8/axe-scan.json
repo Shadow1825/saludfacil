@@ -1,0 +1,58 @@
+[
+  {
+    "url": "/inicio",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/login",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/registro",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/disponibilidad",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/reservar",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/triaje",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  },
+  {
+    "url": "/perfil",
+    "violaciones": 0,
+    "ids": [],
+    "criticas_o_serias": 0,
+    "detalle": []
+  }
+]

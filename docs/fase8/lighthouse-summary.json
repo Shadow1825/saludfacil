@@ -1,0 +1,23 @@
+{
+  "fecha": "2026-09-25T01:32:16.615Z",
+  "urls": [
+    {
+      "ruta": "/login",
+      "accessibility": "1",
+      "umbral": 90,
+      "cumple": true
+    },
+    {
+      "ruta": "/registro",
+      "accessibility": "1",
+      "umbral": 90,
+      "cumple": true
+    },
+    {
+      "ruta": "/inicio",
+      "accessibility": "1",
+      "umbral": 90,
+      "cumple": true
+    }
+  ]
+}

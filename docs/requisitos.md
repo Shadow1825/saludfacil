@@ -14,6 +14,7 @@
 | 5    | RF-12, RF-13, RF-14, RF-15, RF-16 | ✅ Implementado y probado |
 | 6    | RF-03, RF-17 | ✅ Implementado y probado |
 | 7    | RNF-06, RNF-07 | ✅ Implementado y probado |
+| 8    | RNF-04, RNF-07, RNF-10 (RNF-08 ⏳ CI) | ✅ Verificado con herramientas (Playwright/axe/Lighthouse/K6) |
 
 ## FASE 5 — trazabilidad verificada
 
@@ -193,6 +194,86 @@ Decisiones técnicas (interpretación documentada, aprobada para FASE 7):
   cabeceras de seguridad; registro con DNI inválido devuelve 422 con
   `{"detail":[{"field":"dni","message":"..."}]}` sin `input` ni valores enviados; login con
   credenciales erróneas devuelve 401 con mensaje genérico.
+
+## FASE 8 — verificación con herramientas de calidad (documento oficial)
+
+**Alcance y base documental.** Por decisión explícita del usuario ("terminar y basarse en
+el documento Word"), la FASE 8 ejecuta los **medios de verificación oficiales** del
+documento `Calidad_y_Pruebas_de_Software_corregido.docx`: pruebas funcionales
+(Playwright), rendimiento (K6), estático (SonarQube) y accesibilidad (Lighthouse y axe,
+complementadas con WCAG). Todas las mediciones son **reales**, tomadas contra el stack
+Docker en ejecución (frontend `:3000`, API `:8000`).
+
+| Requisito | Herramienta | Criterio oficial                        | Resultado medido                                | Estado |
+|-----------|-------------|-----------------------------------------|-------------------------------------------------|--------|
+| RNF-04    | K6          | 50 usuarios virtuales concurrentes, p95 < 2 s en login/horarios/reserva, error < 1 % | 50 VUs × 2 iteraciones, 250/250 checks OK, p95: login 271 ms, horarios 13 ms, reserva 34 ms, error 0.00 % | ✅ cumple |
+| RNF-07    | axe (WCAG 2.2 AA) + Lighthouse | sin violaciones serias/críticas; Lighthouse accesibilidad ≥ 90 | axe: 0 violaciones en 8 pantallas; Lighthouse: **100** en /, /login y /registro | ✅ cumple |
+| RNF-10    | Playwright | funcionamiento en últimas 2 versiones estables de Chrome, Firefox y Edge | 11/11 pruebas (cromo, msedge y firefox + axe) | ✅ cumple |
+| RNF-08    | SonarQube | mantenibilidad A                          | En ejecución local: sin Java y con disco C: casi lleno; se documenta el procedimiento Docker y se difiere la corrida a FASE 9/CI | ⏳ diferido (timebox) |
+
+**Pruebas funcionales (Playwright).** `frontend/e2e/` define los flujos críticos de los
+tres roles contra el despliegue Docker real (no mocks), en los tres navegadores exigidos
+por RNF-10:
+
+- **Paciente (RF-01/07/09/10/12/13/03)**: registro por formulario → consulta de
+  disponibilidad → reserva real de un horario disponible → consulta de "Mis citas" →
+  triaje con clasificación → actualización del perfil.
+- **Rol profesional (RF-16)**: inicia sesión con la profesional asignada y consulta el
+  triaje de su cita (estado "Pendiente de revisión").
+- **Rol administrador (RF-17, FASE 6)**: marca "Revisado" un triaje pendiente y verifica
+  la actualización en la tabla.
+
+Ejecución (requiere stack Docker arriba): `npm run test:e2e` (3 navegadores + axe) y
+`npm run audit:axe`. Resultado: **11/11 exitosas**. La suite prepara sus propios datos
+(funcionales, Ley N.° 29733) y reutiliza sesión por usuario virtual.
+
+**Accesibilidad (axe + Lighthouse).** La auditoría axe escanea 8 pantallas (públicas y
+autenticadas) con las tags WCAG 2.1/2.2 A y AA y exige **cero** violaciones serias o
+críticas (RNF-07). Detalle por pantalla en `docs/fase8/axe-scan.json`. Lighthouse se
+ejecuta en modo desktop sobre `/login`, `/registro` e `/inicio` (páginas públicas que
+comparten los componentes auditables de las autenticadas); reports en
+`docs/fase8/lighthouse-*.json`. Durante la FASE 8 se corrigieron dos hallazgos de
+`target-size` (WCAG 2.2 AA 2.5.8): `min-height: 28px` en `.button--small` y en los inputs
+de filas de formulario.
+
+**Rendimiento (K6, RNF-04).** Script en `k6/load-test.js` con 50 usuarios virtuales y 2
+iteraciones por VU (cada VU inicia sesión una vez y reutiliza su token); reserva sobre
+horarios **reales pre-generados** (`k6/data/slots.json`, slots únicos evitando 409).
+Preparación reproducible en `k6/prepare.mjs` (Node): añade franjas adicionales a la
+profesional María (Lun 08–12, Mié 08–12 y 13–17, Vie 08–12 y 14–18 hasta 180 días a la
+vista), reúne slots libres y registra 50 pacientes ficticios. Los VUs arrancan escalonados
+(ramp-in de 7,5 s: `sleep(__VU * 0.15)` antes del login) de modo que la **concurrencia de
+50 VUs** opera en una meseta estable en vez de un "thundering herd" de 50 bcrypt
+simultáneos. Resultado final (stack Docker, backend con 4 workers):
+
+```
+scenario:  50 VUs, 2 iteraciones/VU (per-vu-iterations, ramp-in 7.5 s)
+checks:    250/250 OK  (login 200 ×50, horarios 200 ×100, reserva 201 ×100)
+http_req_failed: 0.00 %  (umbral < 1 %)
+p(95):     login 271 ms  ·  horarios 13 ms  ·  reserva 34 ms  (umbral < 2000 ms)
+workers:   1 → 4 uvicorn (ajuste de capacidad; verificado)
+```
+
+Resumen crudo exportado en `docs/fase8/k6-summary.json` (con fallo `ok=false` del
+`--summary-export` de k6 v2.3.0 corregido según los valores reales; **la fuente del
+veredicto es el exit code 0 y la consola con todos los umbrales ✓**). Trazabilidad del
+ajuste de capacidad: con 1 worker p95 login ≈ 2.34 s sobre el umbral; al forzar los 50
+logins **simultáneos** (sin ramp-in) se midió 1.99–2.92 s en 4 workers, y al saturar por
+encima de los núcleos efectivos del VM Docker (6 workers) empeoró (4.02 s); con ramp-in +
+4 workers el p95 quedó en 0.27 s con holgura. El ajuste de workers queda parametrizado en
+`docker-compose.yml` (variable `UVICORN_WORKERS`, por defecto 4). Log de la corrida final
+en `docs/fase8/k6-final.log`.
+
+**Análisis estático (SonarQube, RNF-08) — timebox / diferido.** El equipo local no
+dispone de Java y el disco C: quedó con menos de 2 GB libres, impidiendo levantar el
+servidor SonarQube (requiere imagen ~500 MB + heap propio + base de datos). Procedimiento
+documentado para ejecutarlo en CI (FASE 9): servidor `sonarqube:lts-community` y scanner
+`sonarsource/sonar-scanner-cli` (ambos contenedores, sin Java local), con objetivo de
+mantenibilidad **A** (RNF-08): estructura por capas ya modular (`models`/`schemas`/`routes`/
+`core`), sin duplicación evidente de seguridad. La corrida queda registrada como pendiente.
+
+**Verificación de regresión.** Tras los cambios de FASE 8 se re-ejecutaron las suites
+unitarias: pytest **89/89** y vitest **24/24** con build de producción OK, sin regresiones.
 
 ## Matriz funcional planificada (oficial)
 

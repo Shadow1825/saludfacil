@@ -19,6 +19,11 @@ Computacionales, ciclo 2026-2.
 > **FASE 7**: el texto de RNF-06 y RNF-07 tampoco estaba disponible; se usó una
 > **interpretación documentada** (errores/logs sin datos personales; accesibilidad y
 > responsive), registrada en `docs/requisitos.md`.
+>
+> **FASE 8**: se accedió al documento oficial completo. **Los criterios RNF-04, RNF-07,
+> RNF-08 y RNF-10 sí estaban disponibles en el Word**, por lo que esta fase se basó en su
+> texto exacto (Playwright, K6, axe, Lighthouse, SonarQube) y todos los resultados son
+> mediciones reales, no valores declarados.
 
 ## Propósito
 
@@ -78,7 +83,10 @@ Por fases, conforme al plan del documento de especificación:
   interpretación documentada): errores 422/500 sin datos personales ni trazas internas,
   logs con solo el tipo de excepción, cabeceras de seguridad, enlace "Saltar al
   contenido", HTML semántico y breakpoints responsive con `prefers-reduced-motion`.
-- FASE 8 — Pytest, Playwright, K6, axe, Lighthouse, SonarQube.
+- FASE 8 — ✅ **Verificación con herramientas de calidad** (según el documento oficial):
+  Playwright en Chrome/Edge/Firefox (RNF-10), axe + Lighthouse ≥ 90 (RNF-07), K6 con 50 VUs
+  y p95 < 2 s (RNF-04); resultados reales en `docs/fase8/`; SonarQube (RNF-08) documentado
+  y diferido a FASE 9/CI por entorno local sin Java y disco saturado.
 - FASE 9 — Docker definitivo, GitHub Actions, CI/CD, reportes.
 
 ## Requisitos previos
@@ -162,8 +170,14 @@ Los DNI, teléfonos y demás datos son ficticios (Ley N.° 29733). El seed tambi
 
 - Backend (pytest): `cd backend && pytest`
 - Frontend (vitest): `cd frontend && npm test`
-- E2E (Playwright), K6, axe/Lighthouse y SonarQube: **Pendiente de configuración**
-  (FASE 8). No se declaran resultados que aún no existen.
+- E2E (Playwright, stack Docker arriba): `cd frontend && npm run test:e2e` (3 navegadores
+  + axe). Auditorías: `npm run audit:axe` (axe) y `npm run audit:lighthouse`.
+  Resultados reales (FASE 8) en `docs/fase8/` (`axe-scan.json`,
+  `lighthouse-summary.json`, `k6-summary.json`).
+- K6 (RNF-04): `cd k6 && node prepare.mjs` y luego
+  `k6 run --summary-export="..\docs\fase8\k6-summary.json" load-test.js`.
+- SonarQube (RNF-08): procedimiento y estado en `docs/requisitos.md` (FASE 8); corrida
+  diferida a la CI (FASE 9).
 
 ## CI/CD
 

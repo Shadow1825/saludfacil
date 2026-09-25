@@ -27,6 +27,7 @@ htmlcov/
 playwright-report/
 test-results/
 .k6/
+k6/data/
 *.tsbuildinfo
 
 # IDEs y SO
