@@ -64,7 +64,7 @@ export function AdminSpecialtiesPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-especialidades">
-        <h2 id="titulo-especialidades">Especialidades (RF-05)</h2>
+        <h2 id="titulo-especialidades">Especialidades</h2>
         <p>
           Registre, edite o desactive las especialidades médicas ofrecidas por la clínica.
         </p>

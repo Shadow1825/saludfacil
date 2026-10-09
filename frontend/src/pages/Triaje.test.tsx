@@ -7,12 +7,20 @@ function apiResponse(body: unknown, status = 200): { ok: boolean; status: number
   return { ok: status < 400, status, json: () => Promise.resolve(body) };
 }
 
+function fechaFuturaISO(diasAdelante = 7): string {
+  const fecha = new Date();
+  fecha.setDate(fecha.getDate() + diasAdelante);
+  return fecha.toISOString().slice(0, 10);
+}
+
+const FECHA_CITA = fechaFuturaISO();
+
 const CITA = {
   id: 55,
   paciente_id: 9,
   professional_id: 1,
   specialty_id: 1,
-  fecha: "2026-10-05",
+  fecha: FECHA_CITA,
   hora_inicio: "08:00",
   hora_fin: "08:30",
   estado: "reservada",
@@ -28,7 +36,7 @@ const TRIAGE_ALTA = {
   id: 1,
   cita_id: 55,
   paciente_id: 9,
-  fecha: "2026-10-05",
+  fecha: FECHA_CITA,
   hora_inicio: "08:00",
   paciente: "Luis Quispe",
   profesional: "María López",

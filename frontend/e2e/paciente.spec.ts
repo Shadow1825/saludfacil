@@ -45,6 +45,7 @@ test.describe("Flujo crítico del paciente (RF-01/07/09/10/12/13/03)", () => {
     await page.getByLabel("Fecha de la cita").fill(fecha);
     await expect(page.getByRole("heading", { name: "Horarios disponibles" })).toBeVisible();
     await page.getByRole("button", { name: "Reservar" }).first().click();
+      await page.getByRole("button", { name: "Confirmar reserva" }).click();
     await expect(page.getByRole("status")).toContainText("Cita reservada");
 
     // RF-10 / HU-05: consulta de citas (CA-05.x)
@@ -63,6 +64,6 @@ test.describe("Flujo crítico del paciente (RF-01/07/09/10/12/13/03)", () => {
     await page.goto("/perfil");
     await page.getByLabel("Teléfono").fill("999888777");
     await page.getByRole("button", { name: /Guardar/ }).click();
-    await expect(page.getByRole("status").filter({ hasText: /RF-03/ })).toBeVisible();
+    await expect(page.getByRole("status").filter({ hasText: /actualizaron correctamente/ })).toBeVisible();
   });
 });

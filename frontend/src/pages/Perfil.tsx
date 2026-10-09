@@ -56,7 +56,7 @@ export function PerfilPage(): JSX.Element {
       await refreshUser();
       setCurrentPassword("");
       setNewPassword("");
-      setMessage("Sus datos se actualizaron correctamente (RF-03).");
+      setMessage("Sus datos se actualizaron correctamente.");
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "No se pudieron actualizar sus datos.");
     } finally {
@@ -67,7 +67,7 @@ export function PerfilPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-perfil">
-        <h2 id="titulo-perfil">Mi perfil (RF-03 / HU-15)</h2>
+        <h2 id="titulo-perfil">Mi perfil</h2>
         <p>
           Actualice sus datos personales. DNI y correo electrónico no pueden
           modificarse desde esta opción.

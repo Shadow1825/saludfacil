@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../api/client";
 import { cancelAppointment, ESTADO_LABEL, listAppointments } from "../api/appointments";
 import type { Cita } from "../api/appointments";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 function esFutura(cita: Cita): boolean {
   return cita.estado === "reservada";
@@ -13,6 +14,8 @@ export function MisCitasPage(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const [confirmando, setConfirmando] = useState<Cita | null>(null);
+  const [cancelando, setCancelando] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -33,12 +36,17 @@ export function MisCitasPage(): JSX.Element {
   async function handleCancelar(cita: Cita): Promise<void> {
     setError(null);
     setNotice(null);
+    setCancelando(true);
     try {
       const result = await cancelAppointment(cita.id);
       setNotice(result.message);
+      setConfirmando(null);
       await load();
     } catch (err) {
+      setConfirmando(null);
       setError(err instanceof ApiError ? err.message : "No se pudo cancelar la cita.");
+    } finally {
+      setCancelando(false);
     }
   }
 
@@ -48,7 +56,7 @@ export function MisCitasPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-mis-citas">
-        <h2 id="titulo-mis-citas">Mis citas (RF-10 / RF-11)</h2>
+        <h2 id="titulo-mis-citas">Mis citas</h2>
         <p>Consulte sus citas reservadas y cancele las que no podrá asistir.</p>
         {error && <p className="error" role="alert">{error}</p>}
         {notice && <p className="notice">{notice}</p>}
@@ -88,10 +96,10 @@ export function MisCitasPage(): JSX.Element {
                         <td>
                           <button
                             type="button"
-                            className="button button--small"
-                            onClick={() => void handleCancelar(c)}
+className="button button--danger button--small"
+                            onClick={() => setConfirmando(c)}
                           >
-                            Cancelar (RF-11)
+                            Cancelar
                           </button>
                         </td>
                       </tr>
@@ -135,6 +143,19 @@ export function MisCitasPage(): JSX.Element {
           </>
         )}
       </section>
+
+      {confirmando && (
+        <ConfirmDialog
+          title="Cancelar cita"
+          message={`¿Desea cancelar la cita del ${confirmando.fecha} de ${confirmando.hora_inicio} a ${confirmando.hora_fin} con ${confirmando.profesional}? Esta acción liberará el horario.`}
+          confirmLabel="Confirmar cancelación"
+            variant="danger"
+          cancelLabel="Mantener cita"
+          busy={cancelando}
+          onConfirm={() => void handleCancelar(confirmando)}
+          onCancel={() => setConfirmando(null)}
+        />
+      )}
     </>
   );
 }

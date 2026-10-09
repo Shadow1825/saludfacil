@@ -75,6 +75,12 @@ describe("ReservarCitaPage (FASE 4, HU-04 / RF-09)", () => {
     const boton = (await screen.findAllByRole("button", { name: "Reservar" }))[0];
     fireEvent.click(boton);
 
+    const dialogo = await screen.findByRole("dialog", { name: /Confirmar reserva/i });
+    expect(dialogo).toHaveTextContent("María López");
+    expect(dialogo).toHaveTextContent("2026-10-05 de 08:00 a 08:30");
+
+    fireEvent.click(await screen.findByRole("button", { name: "Confirmar reserva" }));
+
     expect(await screen.findByRole("status")).toHaveTextContent("Cita reservada:");
     expect(fetchMock).toHaveBeenLastCalledWith(
       expect.stringContaining("/appointments"),
@@ -85,8 +91,37 @@ describe("ReservarCitaPage (FASE 4, HU-04 / RF-09)", () => {
     );
   });
 
+  it("no crea la cita si se cancela el diálogo de confirmación (CA-04.x)", async () => {
+    fetchMock
+      .mockResolvedValueOnce(apiResponse(SPECIALTIES))
+      .mockResolvedValueOnce(apiResponse(PROFESSIONALS))
+      .mockResolvedValueOnce(apiResponse(SLOTS));
+
+    render(<ReservarCitaPage />);
+
+    const especialidad = await screen.findByLabelText("Especialidad");
+    fireEvent.change(especialidad, { target: { value: "1" } });
+
+    const profesional = await screen.findByLabelText("Profesional");
+    fireEvent.change(profesional, { target: { value: "10" } });
+
+    const fecha = await screen.findByLabelText("Fecha de la cita");
+    fireEvent.change(fecha, { target: { value: "2026-10-05" } });
+
+    const boton = (await screen.findAllByRole("button", { name: "Reservar" }))[0];
+    fireEvent.click(boton);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Volver" }));
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    const llamadasReserva = fetchMock.mock.calls.filter(
+      (call) => (call[1] as { method?: string } | undefined)?.method === "POST",
+    );
+    expect(llamadasReserva.length).toBe(0);
+  });
+
   it("reporta un horario ya reservado (409) de forma comprensible", async () => {
-    const errorDetail = { detail: "Ese horario ya fue reservado por otro paciente (RNF-09)." };
+    const errorDetail = { detail: "Ese horario ya fue reservado por otro paciente." };
     fetchMock
       .mockResolvedValueOnce(apiResponse(SPECIALTIES))
       .mockResolvedValueOnce(apiResponse(PROFESSIONALS))
@@ -106,6 +141,8 @@ describe("ReservarCitaPage (FASE 4, HU-04 / RF-09)", () => {
 
     const boton = (await screen.findAllByRole("button", { name: "Reservar" }))[0];
     fireEvent.click(boton);
+
+    fireEvent.click(await screen.findByRole("button", { name: "Confirmar reserva" }));
 
     expect(await screen.findByRole("alert")).toHaveTextContent(
       "Ese horario ya fue reservado por otro paciente",

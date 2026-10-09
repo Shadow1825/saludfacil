@@ -107,7 +107,7 @@ export function AdminProfessionalsPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-profesionales">
-        <h2 id="titulo-profesionales">Profesionales de salud (RF-04)</h2>
+        <h2 id="titulo-profesionales">Profesionales de salud</h2>
         <p>Registre profesionales, asigne su especialidad o desactívelos.</p>
         {error && <p className="error" role="alert">{error}</p>}
         {notice && <p className="notice">{notice}</p>}

@@ -53,7 +53,7 @@ describe("PerfilPage (FASE 6, HU-15 / RF-03)", () => {
     fireEvent.change(screen.getByLabelText("Teléfono"), { target: { value: "987654321" } });
     fireEvent.click(screen.getByRole("button", { name: "Guardar cambios" }));
 
-    expect(await screen.findByText("Sus datos se actualizaron correctamente (RF-03).")).toBeTruthy();
+    expect(await screen.findByText("Sus datos se actualizaron correctamente.")).toBeTruthy();
 
     const patchCall = fetchMock.mock.calls.find((call) => call[1] && call[1].method === "PATCH");
     expect(patchCall).toBeDefined();

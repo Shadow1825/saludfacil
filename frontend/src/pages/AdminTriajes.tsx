@@ -31,7 +31,7 @@ export function AdminTriajesPage(): JSX.Element {
     setNotice(null);
     try {
       await updateTriajeRevision(triaje.id, estado);
-      setNotice(`Triaje marcado como "${estado}" (RF-17).`);
+      setNotice(`Triaje marcado como "${estado}".`);
       await load();
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "No se pudo actualizar la revisión.");
@@ -41,7 +41,7 @@ export function AdminTriajesPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-admin-triajes">
-        <h2 id="titulo-admin-triajes">Revisión de triajes (RF-17 / HU-13)</h2>
+        <h2 id="titulo-admin-triajes">Revisión de triajes</h2>
         <p>
           Revise las clasificaciones iniciales del sistema. Confirme ("revisado")
           o descarte los registros con datos inconsistentes ("descartado").

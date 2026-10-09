@@ -63,7 +63,7 @@ export function DisponibilidadPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-disponibilidad">
-        <h2 id="titulo-disponibilidad">Consulta de disponibilidad (RF-07 / RF-08)</h2>
+        <h2 id="titulo-disponibilidad">Consulta de disponibilidad</h2>
         <p>
           Seleccione una especialidad, elija un profesional y consulte los horarios
           disponibles para su atención.

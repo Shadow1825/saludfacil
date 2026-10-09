@@ -64,7 +64,7 @@ describe("AdminTriajesPage (FASE 6, HU-13 / RF-17)", () => {
     const boton = await screen.findByRole("button", { name: "Revisado" });
     fireEvent.click(boton);
 
-    expect(await screen.findByText("Triaje marcado como \"revisado\" (RF-17).")).toBeTruthy();
+    expect(await screen.findByText('Triaje marcado como "revisado".')).toBeTruthy();
 
     const patchCall = fetchMock.mock.calls.find((call) => call[1] && call[1].method === "PATCH");
     expect(patchCall).toBeDefined();

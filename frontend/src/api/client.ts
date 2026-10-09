@@ -56,11 +56,10 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     throw new ApiError(0, "No se pudo conectar con el servidor.");
   }
 
-  if (response.status === 401) {
-    setToken(null);
-  }
-
-  if (!response.ok && response.status !== 401) {
+  if (!response.ok) {
+    if (response.status === 401) {
+      setToken(null);
+    }
     let message = `Error del servidor (HTTP ${response.status}).`;
     try {
       const data = (await response.json()) as { detail?: string | unknown };

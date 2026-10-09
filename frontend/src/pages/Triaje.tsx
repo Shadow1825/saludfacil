@@ -69,7 +69,7 @@ export function TriajePage(): JSX.Element {
       return;
     }
     if (sintomas.length === 0) {
-      setError("Registre al menos un síntoma (CA-07.3).");
+      setError("Debe registrar al menos un síntoma.");
       return;
     }
     setBusy(true);
@@ -89,7 +89,7 @@ export function TriajePage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-triaje">
-        <h2 id="titulo-triaje">Triaje inicial (RF-12 / HU-07)</h2>
+        <h2 id="titulo-triaje">Triaje inicial</h2>
         <p>
           Registre los síntomas que presenta y obtenga una clasificación inicial
           orientativa. Esta clasificación no constituye un diagnóstico médico.

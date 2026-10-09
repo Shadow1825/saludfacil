@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ApiError } from "../api/client";
 import { cancelAppointment, ESTADO_LABEL, listAppointments, updateAppointmentEstado } from "../api/appointments";
 import type { Cita } from "../api/appointments";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 export function AdminCitasPage(): JSX.Element {
   const [citas, setCitas] = useState<Cita[]>([]);
@@ -10,6 +11,8 @@ export function AdminCitasPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [filtroEstado, setFiltroEstado] = useState("");
+  const [confirmandoCancel, setConfirmandoCancel] = useState<Cita | null>(null);
+  const [cancelando, setCancelando] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -42,19 +45,24 @@ export function AdminCitasPage(): JSX.Element {
   async function handleCancelarAdmin(cita: Cita): Promise<void> {
     setError(null);
     setNotice(null);
+    setCancelando(true);
     try {
       const result = await cancelAppointment(cita.id);
       setNotice(result.message);
+      setConfirmandoCancel(null);
       await load();
     } catch (err) {
+      setConfirmandoCancel(null);
       setError(err instanceof ApiError ? err.message : "No se pudo cancelar la cita.");
+    } finally {
+      setCancelando(false);
     }
   }
 
   return (
     <>
       <section aria-labelledby="titulo-admin-citas">
-        <h2 id="titulo-admin-citas">Gestión de citas (RF-21)</h2>
+        <h2 id="titulo-admin-citas">Gestión de citas</h2>
         <p>Vea todas las citas del sistema, cambie su estado o cancélelas.</p>
         {error && <p className="error" role="alert">{error}</p>}
         {notice && <p className="notice">{notice}</p>}
@@ -122,8 +130,8 @@ export function AdminCitasPage(): JSX.Element {
                           </button>{" "}
                           <button
                             type="button"
-                            className="button button--small"
-                            onClick={() => void handleCancelarAdmin(c)}
+className="button button--danger button--small"
+                            onClick={() => setConfirmandoCancel(c)}
                           >
                             Cancelar
                           </button>
@@ -137,6 +145,19 @@ export function AdminCitasPage(): JSX.Element {
           </div>
         )}
       </section>
+
+      {confirmandoCancel && (
+        <ConfirmDialog
+          title="Cancelar cita"
+          message={`¿Desea cancelar la cita del ${confirmandoCancel.fecha} de ${confirmandoCancel.hora_inicio} a ${confirmandoCancel.hora_fin} con ${confirmandoCancel.paciente}? Esta acción liberará el horario.`}
+          confirmLabel="Confirmar cancelación"
+            variant="danger"
+          cancelLabel="Mantener cita"
+          busy={cancelando}
+          onConfirm={() => void handleCancelarAdmin(confirmandoCancel)}
+          onCancel={() => setConfirmandoCancel(null)}
+        />
+      )}
     </>
   );
 }

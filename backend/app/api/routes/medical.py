@@ -322,7 +322,7 @@ def directory_slots(
     except ValueError:
         raise HTTPException(status_code=422, detail="Formato de fecha inválido (use YYYY-MM-DD).")
     if fecha_date < datetime.now(timezone.utc).date():
-        raise HTTPException(status_code=422, detail="No se pueden consultar fechas pasadas. (RNF-09)")
+        raise HTTPException(status_code=422, detail="No se pueden consultar fechas pasadas.")
 
     profesional = db.get(Profesional, professional_id)
     if not profesional or not profesional.is_active:

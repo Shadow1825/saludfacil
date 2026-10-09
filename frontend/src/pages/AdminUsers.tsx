@@ -85,10 +85,7 @@ export function AdminUsersPage(): JSX.Element {
     <>
       <section aria-labelledby="titulo-usuarios">
         <h2 id="titulo-usuarios">Usuarios</h2>
-        <p>
-          Gestión de cuentas (RF-18 / CA-11.5): crear, desactivar o reactivar usuarios del
-          sistema.
-        </p>
+        <p>Gestione las cuentas del sistema: cree, desactive o reactive usuarios.</p>
 
         {notice !== null && (
           <p className="notice" role="status">

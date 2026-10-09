@@ -5,6 +5,7 @@ import { createAppointment, directorioSlots } from "../api/appointments";
 import type { Slot } from "../api/appointments";
 import { directorioProfessionals, directorioSpecialties } from "../api/medical";
 import type { Especialidad, Profesional } from "../api/medical";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 
 export function ReservarCitaPage(): JSX.Element {
   const [specialties, setSpecialties] = useState<Especialidad[]>([]);
@@ -16,6 +17,7 @@ export function ReservarCitaPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [confirmacion, setConfirmacion] = useState<string | null>(null);
+  const [confirmando, setConfirmando] = useState<Slot | null>(null);
 
   useEffect(() => {
     directorioSpecialties()
@@ -64,21 +66,30 @@ export function ReservarCitaPage(): JSX.Element {
     }
   }
 
-  async function handleReservar(slot: Slot): Promise<void> {
+  function abrirConfirmacion(slot: Slot): void {
+    setError(null);
+    setConfirmacion(null);
+    setConfirmando(slot);
+  }
+
+  async function confirmarReserva(): Promise<void> {
+    if (!confirmando) return;
     setError(null);
     setConfirmacion(null);
     setBusy(true);
     try {
       const cita = await createAppointment({
         professional_id: Number(selectedProfessional),
-        fecha: slot.fecha,
-        hora_inicio: slot.hora_inicio,
+        fecha: confirmando.fecha,
+        hora_inicio: confirmando.hora_inicio,
       });
       setConfirmacion(
         `Cita reservada: ${cita.profesional} · ${cita.dia} ${cita.fecha} ${cita.hora_inicio}-${cita.hora_fin}.`,
       );
-      setSlots((prev) => prev.filter((s) => s.hora_inicio !== slot.hora_inicio));
+      setSlots((prev) => prev.filter((s) => s.hora_inicio !== confirmando.hora_inicio));
+      setConfirmando(null);
     } catch (err) {
+      setConfirmando(null);
       setError(err instanceof ApiError ? err.message : "No se pudo reservar la cita.");
     } finally {
       setBusy(false);
@@ -88,7 +99,7 @@ export function ReservarCitaPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-reservar">
-        <h2 id="titulo-reservar">Reservar cita (RF-09)</h2>
+        <h2 id="titulo-reservar">Reservar cita</h2>
         <p>
           Elija la especialidad, el profesional y la fecha para ver los horarios
           disponibles y reservar su cita.
@@ -157,7 +168,7 @@ export function ReservarCitaPage(): JSX.Element {
                           type="button"
                           className="button button--small"
                           disabled={busy}
-                          onClick={() => void handleReservar(s)}
+                          onClick={() => abrirConfirmacion(s)}
                         >
                           {busy ? "Reservando…" : "Reservar"}
                         </button>
@@ -169,6 +180,24 @@ export function ReservarCitaPage(): JSX.Element {
             </div>
           ))}
       </section>
+
+      {confirmando && (
+        <ConfirmDialog
+          title="Confirmar reserva"
+          message={`¿Desea reservar la cita de ${
+            specialties.find((s) => String(s.id) === selectedSpecialty)?.nombre ?? ""
+          } con ${
+            professionals.find((p) => String(p.id) === selectedProfessional)?.first_name ?? ""
+          } ${
+            professionals.find((p) => String(p.id) === selectedProfessional)?.last_name ?? ""
+          } para el ${confirmando.fecha} de ${confirmando.hora_inicio} a ${confirmando.hora_fin}?`}
+          confirmLabel="Confirmar reserva"
+          cancelLabel="Volver"
+          busy={busy}
+          onConfirm={() => void confirmarReserva()}
+          onCancel={() => setConfirmando(null)}
+        />
+      )}
     </>
   );
 }

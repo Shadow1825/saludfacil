@@ -45,7 +45,7 @@ def update_profile(
     if payload.new_password is not None:
         if not verify_password(payload.current_password or "", user.password_hash):
             raise HTTPException(
-                status_code=422, detail="La contraseña actual es incorrecta (CA-15.2)."
+                status_code=422, detail="La contraseña actual es incorrecta."
             )
         user.password_hash = hash_password(payload.new_password)
         logger.info("El paciente %s cambió su contraseña.", user.id)

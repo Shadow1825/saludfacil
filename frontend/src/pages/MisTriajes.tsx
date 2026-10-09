@@ -19,7 +19,7 @@ export function MisTriajesPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-triajes-prof">
-        <h2 id="titulo-triajes-prof">Triaje de mis citas (RF-14 / HU-08)</h2>
+        <h2 id="titulo-triajes-prof">Triaje de mis citas</h2>
         <p>
           Consulte la clasificación inicial registrada por los pacientes de las
           citas asignadas a usted. Es una clasificación orientativa, no un diagnóstico.

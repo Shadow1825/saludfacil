@@ -31,7 +31,7 @@ export function ProfesionalCitasPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-profesional-citas">
-        <h2 id="titulo-profesional-citas">Mis citas (HU-08 / RF-14)</h2>
+        <h2 id="titulo-profesional-citas">Mis citas</h2>
         <p>Citas asignadas a su atención. Revise el triaje de cada una en «Triaje de citas».</p>
         {error && <p className="error" role="alert">{error}</p>}
 

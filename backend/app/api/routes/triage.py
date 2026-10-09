@@ -87,7 +87,7 @@ def create_triage(
     user_prof = db.get(User, profesional.user_id) if profesional else None
     especialidad = db.get(Especialidad, cita.specialty_id)
     cuerpo = serialize_triage(triaje, paciente, cita, user_prof, especialidad)
-    cuerpo["message"] = "Clasificación inicial registrada correctamente (RF-12)."
+    cuerpo["message"] = "Clasificación inicial registrada correctamente."
     return cuerpo
 
 

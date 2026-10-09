@@ -102,7 +102,7 @@ export function AdminSchedulesPage(): JSX.Element {
   return (
     <>
       <section aria-labelledby="titulo-horarios">
-        <h2 id="titulo-horarios">Horarios de atención (RF-06)</h2>
+        <h2 id="titulo-horarios">Horarios de atención</h2>
         <p>Defina los días y horas de atención de cada profesional.</p>
         {error && <p className="error" role="alert">{error}</p>}
         {notice && <p className="notice">{notice}</p>}

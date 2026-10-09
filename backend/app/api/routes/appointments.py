@@ -102,7 +102,7 @@ def create_appointment(
     user: User = Depends(require_roles(UserRole.PACIENTE)),
 ):
     if payload.fecha < _hoy():
-        raise HTTPException(status_code=422, detail="No se pueden reservar citas en fechas pasadas. (RNF-09)")
+        raise HTTPException(status_code=422, detail="No se pueden reservar citas en fechas pasadas.")
 
     profesional = db.get(Profesional, payload.professional_id)
     if not profesional or not profesional.is_active:
@@ -123,11 +123,11 @@ def create_appointment(
         if ocupado:
             raise HTTPException(
                 status_code=409,
-                detail="Ese horario ya fue reservado por otro paciente (RNF-09).",
+                detail="Ese horario ya fue reservado por otro paciente.",
             )
         raise HTTPException(
             status_code=422,
-            detail="El horario solicitado no está disponible para esa fecha (RNF-09).",
+            detail="El horario solicitado no está disponible para esa fecha.",
         )
 
     cita = Cita(
