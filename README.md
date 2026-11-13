@@ -181,7 +181,7 @@ Los DNI, teléfonos y demás datos son ficticios (Ley N.° 29733). El seed tambi
 
 ## CI/CD
 
-- GitHub Actions: **pendiente de implementación completa** (FASE 9) conforme a la
+- GitHub Actions: **Implementación completa** (FASE 9) conforme a la
   especificación (instalación, lint, unitarias, integración, build, análisis y E2E).
 
 ## Documentación
